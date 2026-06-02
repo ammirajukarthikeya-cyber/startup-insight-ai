@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Validate, Analyze & Scale Your Startup with Startup Insight AI. Get real-time feasibility analysis, competitor mapping, vulnerability scans, investor matching, and guidance from our AI Mentor.">
+    <meta name="keywords" content="startup, AI analyzer, competitor discovery, risk management, investor matching, venture capital, accelerator, AI mentor">
+    <title>Startup Insight AI - Validate, Analyze & Scale Your Startup</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+    <!-- Grid Overlay Decoration -->
+    <div class="grid-background"></div>
+    <div class="glowing-orb-1"></div>
+    <div class="glowing-orb-2"></div>
+    <div class="glowing-orb-3"></div>
+
+    <!-- Sticky Navigation Bar -->
+    <header class="glass-nav" id="main-header">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="32" height="32" rx="8" fill="url(#logo-grad)"/>
+                    <path d="M16 7L24 15H19V25H13V15H8L16 7Z" fill="white"/>
+                    <circle cx="16" cy="16" r="3" fill="#00f0ff"/>
+                    <defs>
+                        <linearGradient id="logo-grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#7c3aed"/>
+                            <stop offset="1" stop-color="#2563eb"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <span>Startup Insight <span class="accent-text">AI</span></span>
+            </a>
+            
+            <nav class="nav-menu" id="nav-links">
+                <a href="#analyzer" class="nav-link">Idea Analyzer</a>
+                <a href="#competitors" class="nav-link">Competitors</a>
+                <a href="#vulnerabilities" class="nav-link">Risk Scanner</a>
+                <a href="#investors" class="nav-link">Investors & Events</a>
+                <a href="#dashboard" class="nav-link">Dashboard</a>
+                <a href="#mentor" class="nav-link">AI Mentor</a>
+                <a href="#pricing" class="nav-link">Pricing</a>
+            </nav>
+
+            <div class="nav-actions">
+                <button class="theme-toggle" id="theme-toggle-btn" aria-label="Toggle Theme">
+                    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
+                <a href="#analyzer" class="btn btn-secondary btn-sm nav-cta">Launch Console</a>
+            </div>
+
+            <button class="hamburger-menu" id="menu-btn" aria-label="Toggle Menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 1. Hero Section -->
+    <section class="hero-section" id="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="badge"><span>Introducing GPT-5 Enabled Startup Engine</span></div>
+                <h1 class="hero-title">Validate, Analyze & <br><span class="gradient-text">Scale Your Startup</span> with AI</h1>
+                <p class="hero-subtitle">Startup Insight AI leverages deep industry intelligence to screen business concepts, map competitor ecosystems, predict regulatory risks, and unlock investment matches in seconds.</p>
+                <div class="hero-actions">
+                    <a href="#analyzer" class="btn btn-primary" id="hero-btn-analyze">Analyze My Startup Idea</a>
+                    <a href="#investors" class="btn btn-outline" id="hero-btn-explore">Explore Opportunities</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-num" id="stat-validators">14,240+</span>
+                        <span class="stat-label">Ideas Validated</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-num" id="stat-funding">$42M+</span>
+                        <span class="stat-label">Funding Secured</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-num" id="stat-accuracy">94.8%</span>
+                        <span class="stat-label">Prediction Accuracy</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hero-visual">
+                <div class="dashboard-mockup glass-card glow-purple animate-float">
+                    <div class="mockup-header">
+                        <div class="mockup-dots">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                        </div>
+                        <div class="mockup-address">https://console.startupinsight.ai/dashboard</div>
+                    </div>
+                    <div class="mockup-body">
+                        <img src="assets/hero_dashboard.png" alt="Startup Insight AI Dashboard Illustration" class="dashboard-img">
+                        <div class="mockup-overlay-card glass-card">
+                            <div class="micro-stat">
+                                <span class="micro-dot pulse-cyan"></span>
+                                <div>
+                                    <p class="micro-title">AI Processing Feasibility</p>
+                                    <p class="micro-value">Score: 87.2/100 (Optimal)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Startup Idea Analyzer -->
+    <section class="section-padding" id="analyzer">
+        <div class="section-header">
+            <h2 class="section-title">Startup Idea <span class="gradient-text">Analyzer</span></h2>
+            <p class="section-desc">Outline your business premise and select your target industry. Our advanced AI modeling engine evaluates feasibility, utility metrics, and market entry barriers instantly.</p>
+        </div>
+
+        <div class="container grid-two-cols">
+            <!-- Left: Input Console -->
+            <div class="glass-card console-card glow-cyan">
+                <div class="card-header-accent">
+                    <span class="header-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
+                    </span>
+                    <h3>Startup Input Console</h3>
+                </div>
+                
+                <form id="idea-form" class="interactive-form">
+                    <div class="form-group">
+                        <label for="startup-name">Startup Name (Optional)</label>
+                        <input type="text" id="startup-name" placeholder="e.g. EcoSphere Logistics" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="startup-industry">Target Industry</label>
+                        <select id="startup-industry" class="form-control" required>
+                            <option value="" disabled selected>Select an Industry</option>
+                            <option value="saas">SaaS & B2B Software</option>
+                            <option value="fintech">FinTech & Web3</option>
+                            <option value="healthtech">HealthTech & Biotech</option>
+                            <option value="cleantech">CleanTech & Energy</option>
+                            <option value="ecommerce">E-Commerce & Logistics</option>
+                            <option value="ai">Artificial Intelligence & Robotics</option>
+                            <option value="edtech">EdTech & E-Learning</option>
+                            <option value="proptech">PropTech & Real Estate</option>
+                            <option value="agritech">AgriTech & FoodTech</option>
+                            <option value="cybersecurity">CyberSecurity & DevSecOps</option>
+                            <option value="gaming">Gaming & Entertainment</option>
+                            <option value="traveltech">TravelTech & Hospitality</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="startup-pitch">Explain Your Startup Idea</label>
+                        <textarea id="startup-pitch" rows="5" placeholder="Describe the problem, your solution, your target customer, and how you plan to make money..." class="form-control" required></textarea>
+                        <small class="form-hint">Tip: Be descriptive for a more accurate AI model calculation.</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block" id="btn-analyze-idea">
+                        <span class="btn-text">Run AI Feasibility Scans</span>
+                        <svg class="spinner hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle><path d="M4 12a8 8 0 0 1 8-8"></path></svg>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right: Live AI Feasibility Output -->
+            <div class="glass-card console-card results-card" id="analysis-results">
+                <div class="empty-state" id="analysis-empty">
+                    <div class="empty-icon-wrap">
+                        <svg class="glow-pulse-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    </div>
+                    <h4>Awaiting Startup Parameters</h4>
+                    <p>Submit your startup idea details in the console to generate scores, market feedback, SWOT breakdowns, and viability profiles.</p>
+                </div>
+
+                <div class="results-layout hidden" id="analysis-content">
+                    <div class="score-header">
+                        <div class="feasibility-meter">
+                            <svg viewBox="0 0 100 100" class="circular-chart cyan-chart">
+                                <path class="circle-bg" d="M18 2.0845 a 36.3168 36.3168 0 0 1 0 72.6336 a 36.3168 36.3168 0 0 1 0 -72.6336" />
+                                <path class="circle" id="feasibility-progress" stroke-dasharray="0, 100" d="M18 2.0845 a 36.3168 36.3168 0 0 1 0 72.6336 a 36.3168 36.3168 0 0 1 0 -72.6336" />
+                                <text x="18" y="20.35" class="percentage" id="feasibility-score-val">0%</text>
+                            </svg>
+                        </div>
+                        <div class="score-details">
+                            <span class="badge badge-cyan" id="feasibility-badge">Evaluating</span>
+                            <h3 id="analysis-startup-title">AI Insight Score</h3>
+                            <p class="score-desc" id="feasibility-summary">Your idea shows strong structural characteristics. See details below.</p>
+                        </div>
+                    </div>
+
+                    <div class="insights-grid">
+                        <div class="insight-box">
+                            <span class="insight-label">SWOT: Strengths</span>
+                            <ul class="insight-list list-check" id="strengths-list"></ul>
+                        </div>
+                        <div class="insight-box">
+                            <span class="insight-label">SWOT: Weaknesses</span>
+                            <ul class="insight-list list-x" id="weaknesses-list"></ul>
+                        </div>
+                    </div>
+                    
+                    <div class="market-fit-meter">
+                        <div class="bar-header">
+                            <span>Market Fit Confidence</span>
+                            <span id="market-fit-value">0%</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="market-fit-fill"></div>
+                        </div>
+                    </div>
+
+                    <div class="action-recommendation">
+                        <h5>AI Actionable Roadmap Recommendation</h5>
+                        <p id="analysis-recommendation">Processing idea metrics...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 10. Analytics Dashboard (Brought Up to Display Dynamic Validation Output Metrics) -->
+    <section class="section-padding section-alt" id="dashboard">
+        <div class="section-header">
+            <h2 class="section-title">Startup Health <span class="gradient-text">Analytics Dashboard</span></h2>
+            <p class="section-desc">Track real-time score indicators generated based on your startup idea analysis. Updates automatically as details are refined.</p>
+        </div>
+
+        <div class="container">
+            <div class="analytics-metrics-grid">
+                <!-- Card 1: Startup Health Score -->
+                <div class="glass-card dashboard-widget">
+                    <div class="widget-header">
+                        <h4>Startup Health Score</h4>
+                        <span class="trend-icon positive" id="health-trend">--</span>
+                    </div>
+                    <div class="widget-large-value" id="health-val">0</div>
+                    <div class="widget-chart-wrap">
+                        <svg viewBox="0 0 100 20" class="mini-sparkline">
+                            <path class="spark-line" id="health-spark" d="M0,10 L20,10 L40,10 L60,10 L80,10 L100,10" fill="none" stroke="#2563eb" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <p class="widget-footer">Based on scalability, viability, and team dimensions.</p>
+                </div>
+
+                <!-- Card 2: Risk Score -->
+                <div class="glass-card dashboard-widget">
+                    <div class="widget-header">
+                        <h4>Vulnerability Risk Index</h4>
+                        <span class="trend-icon negative" id="risk-trend">--</span>
+                    </div>
+                    <div class="widget-large-value" id="risk-val">0%</div>
+                    <div class="widget-chart-wrap">
+                        <svg viewBox="0 0 100 20" class="mini-sparkline">
+                            <path class="spark-line-danger" id="risk-spark" d="M0,10 L20,10 L40,10 L60,10 L80,10 L100,10" fill="none" stroke="#ef4444" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <p class="widget-footer">Measures threat surface across regulatory and business lines.</p>
+                </div>
+
+                <!-- Card 3: Market Opportunity Score -->
+                <div class="glass-card dashboard-widget">
+                    <div class="widget-header">
+                        <h4>Market Opportunity Score</h4>
+                        <span class="trend-icon positive" id="opp-trend">--</span>
+                    </div>
+                    <div class="widget-large-value" id="opp-val">0</div>
+                    <div class="widget-chart-wrap">
+                        <svg viewBox="0 0 100 20" class="mini-sparkline">
+                            <path class="spark-line-cyan" id="opp-spark" d="M0,10 L20,10 L40,10 L60,10 L80,10 L100,10" fill="none" stroke="#00f0ff" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <p class="widget-footer">Assesses addressable market size (TAM/SAM) and growth rates.</p>
+                </div>
+
+                <!-- Card 4: Funding Readiness Score -->
+                <div class="glass-card dashboard-widget">
+                    <div class="widget-header">
+                        <h4>Funding Readiness Score</h4>
+                        <span class="trend-icon positive" id="funding-trend">--</span>
+                    </div>
+                    <div class="widget-large-value" id="funding-val">0</div>
+                    <div class="widget-chart-wrap">
+                        <svg viewBox="0 0 100 20" class="mini-sparkline">
+                            <path class="spark-line-purple" id="funding-spark" d="M0,10 L20,10 L40,10 L60,10 L80,10 L100,10" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <p class="widget-footer">Evaluates attractiveness to Angel networks and VCs.</p>
+                </div>
+            </div>
+
+            <!-- Dashboard Visual Matrix -->
+            <div class="glass-card complex-dashboard-panel glow-purple">
+                <div class="widget-panel-header">
+                    <div>
+                        <h3>Integrated Startup Performance Radar</h3>
+                        <p class="subtext">Multi-dimensional validation parameters mapped in real-time</p>
+                    </div>
+                    <button class="btn btn-outline btn-sm" id="btn-export-pdf">Export Valuation Brief</button>
+                </div>
+                <div class="radar-visual-container">
+                    <div class="radar-chart-wrapper">
+                        <!-- Custom Dynamic SVG Radar Chart -->
+                        <svg viewBox="-120 -120 240 240" class="svg-radar-chart">
+                            <!-- Background Concentric Pentagons -->
+                            <polygon points="0,-100 95,-31 59,81 -59,81 -95,-31" class="radar-bg-grid" />
+                            <polygon points="0,-75 71,-23 44,61 -44,61 -71,-23" class="radar-bg-grid" />
+                            <polygon points="0,-50 48,-15 29,40 -29,40 -48,-15" class="radar-bg-grid" />
+                            <polygon points="0,-25 24,-8 15,20 -15,20 -24,-8" class="radar-bg-grid" />
+                            
+                            <!-- Grid Axes Lines -->
+                            <line x1="0" y1="0" x2="0" y2="-100" class="radar-axis" />
+                            <line x1="0" y1="0" x2="95" y2="-31" class="radar-axis" />
+                            <line x1="0" y1="0" x2="59" y2="81" class="radar-axis" />
+                            <line x1="0" y1="0" x2="-59" y2="81" class="radar-axis" />
+                            <line x1="0" y1="0" x2="-95" y2="-31" class="radar-axis" />
+
+                            <!-- Dynamic Radar Polygon Data -->
+                            <polygon points="0,0 0,0 0,0 0,0 0,0" id="radar-data-poly" class="radar-poly" />
+                            
+                            <!-- Labels around the radar chart -->
+                            <text x="0" y="-108" text-anchor="middle" class="radar-label">Market Size</text>
+                            <text x="105" y="-28" class="radar-label">Technical Feasibility</text>
+                            <text x="68" y="93" class="radar-label">Regulatory Security</text>
+                            <text x="-68" y="93" text-anchor="end" class="radar-label">Financial Margin</text>
+                            <text x="-105" y="-28" text-anchor="end" class="radar-label">Scalability Speed</text>
+                        </svg>
+                    </div>
+
+                    <div class="metrics-breakdown-details">
+                        <h4>AI Diagnostics Review</h4>
+                        <div class="metric-diagnostic-row">
+                            <span class="diagnostic-title">Industry Standard Benchmark</span>
+                            <span class="diagnostic-val">Top 15% of Submissions</span>
+                        </div>
+                        <div class="metric-diagnostic-row">
+                            <span class="diagnostic-title">Legal Risk Factor</span>
+                            <span class="diagnostic-val text-green" id="diag-legal-risk">Low (12%)</span>
+                        </div>
+                        <div class="metric-diagnostic-row">
+                            <span class="diagnostic-title">Scalability Potential</span>
+                            <span class="diagnostic-val text-cyan" id="diag-scalability">High</span>
+                        </div>
+                        <div class="metric-diagnostic-row">
+                            <span class="diagnostic-title">Suggested Initial Funding Stage</span>
+                            <span class="diagnostic-val text-purple" id="diag-funding">Pre-Seed</span>
+                        </div>
+                        <div class="metric-diagnostic-row">
+                            <span class="diagnostic-title">Recommended Product Development Mode</span>
+                            <span class="diagnostic-val" id="diag-mode">Fast MVP Release</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Competitor Discovery -->
+    <section class="section-padding" id="competitors">
+        <div class="section-header">
+            <h2 class="section-title">Similar Startup & <br><span class="gradient-text">Competitor Discovery</span></h2>
+            <p class="section-desc">Detect existing market players, analyze competitor models, and find weaknesses to exploit for market disruption.</p>
+        </div>
+
+        <div class="container">
+            <div class="competitor-search-header glass-card">
+                <div class="search-wrap">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="competitor-search" class="form-control-search" placeholder="Type a concept or industry to search mapped competitors...">
+                </div>
+                <div class="search-filters">
+                    <button class="filter-btn active" data-filter="all">All Ecosystems</button>
+                    <button class="filter-btn" data-filter="direct">Direct Competitors</button>
+                    <button class="filter-btn" data-filter="indirect">Indirect players</button>
+                </div>
+            </div>
+
+            <div class="competitor-cards-grid" id="competitors-list">
+                <!-- Dynamically populated. Fallback pre-filled state below: -->
+                <div class="glass-card competitor-card">
+                    <div class="comp-badge direct">Direct</div>
+                    <div class="comp-header">
+                        <h4>LogiStream AI</h4>
+                        <span class="market-share">12% Share</span>
+                    </div>
+                    <p class="comp-pitch">Provides automated dispatch logistics utilizing predictive analytics and vehicle sensors.</p>
+                    <div class="swot-mini">
+                        <div class="swot-item s"><strong>Strength:</strong> Established fleet partnership network.</div>
+                        <div class="swot-item w"><strong>Weakness:</strong> Outdated API interface, hard to customize.</div>
+                    </div>
+                    <div class="exploit-strategy">
+                        <strong>Disruption strategy:</strong> Target small logistics agencies offering a self-serve API pricing model.
+                    </div>
+                </div>
+                
+                <div class="glass-card competitor-card">
+                    <div class="comp-badge indirect">Indirect</div>
+                    <div class="comp-header">
+                        <h4>FlexiRoute Inc</h4>
+                        <span class="market-share">8% Share</span>
+                    </div>
+                    <p class="comp-pitch">Manual route-optimization tools for package deliveries and local drivers.</p>
+                    <div class="swot-mini">
+                        <div class="swot-item s"><strong>Strength:</strong> Very low pricing matrix.</div>
+                        <div class="swot-item w"><strong>Weakness:</strong> Missing real-time sensor updates or ML path generation.</div>
+                    </div>
+                    <div class="exploit-strategy">
+                        <strong>Disruption strategy:</strong> Standardize high-speed automated routing that beats manual scheduling.
+                    </div>
+                </div>
+
+                <div class="glass-card competitor-card">
+                    <div class="comp-badge direct">Direct</div>
+                    <div class="comp-header">
+                        <h4>RouteSync Technologies</h4>
+                        <span class="market-share">15% Share</span>
+                    </div>
+                    <p class="comp-pitch">Enterprise delivery automation middleware with multi-fleet configurations.</p>
+                    <div class="swot-mini">
+                        <div class="swot-item s"><strong>Strength:</strong> Enterprise level compliance layers.</div>
+                        <div class="swot-item w"><strong>Weakness:</strong> Average setup times require 4-6 weeks of professional integration.</div>
+                    </div>
+                    <div class="exploit-strategy">
+                        <strong>Disruption strategy:</strong> Offer 1-click cloud connectors for instant setups.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Vulnerability Scanner -->
+    <section class="section-padding section-alt" id="vulnerabilities">
+        <div class="section-header">
+            <h2 class="section-title">Startup <span class="gradient-text">Vulnerability Scanner</span></h2>
+            <p class="section-desc">Identify operational bottlenecks, compliance risks, and business vulnerabilities prior to pitch meetings and scale stages.</p>
+        </div>
+
+        <div class="container grid-two-cols">
+            <!-- Left: Risk Grid Overview -->
+            <div class="glass-card glow-red">
+                <div class="card-header-accent border-red">
+                    <span class="header-icon text-red">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    </span>
+                    <h3>Active Risk Vectors Scanned</h3>
+                </div>
+
+                <div class="vulnerability-list-tabs">
+                    <!-- Business Risks -->
+                    <div class="risk-tab-item active" data-risk="business">
+                        <div class="risk-tab-header">
+                            <span class="risk-title">Business & Market Risk</span>
+                            <span class="risk-level risk-critical" id="risk-lvl-business">Medium</span>
+                        </div>
+                        <div class="progress-bar-bg-mini"><div class="progress-bar-fill-mini bg-orange" id="risk-progress-business" style="width: 55%"></div></div>
+                    </div>
+
+                    <!-- Financial Risks -->
+                    <div class="risk-tab-item" data-risk="financial">
+                        <div class="risk-tab-header">
+                            <span class="risk-title">Financial & Cash Run Risk</span>
+                            <span class="risk-level risk-critical" id="risk-lvl-financial">High</span>
+                        </div>
+                        <div class="progress-bar-bg-mini"><div class="progress-bar-fill-mini bg-red" id="risk-progress-financial" style="width: 80%"></div></div>
+                    </div>
+
+                    <!-- Security Risks -->
+                    <div class="risk-tab-item" data-risk="security">
+                        <div class="risk-tab-header">
+                            <span class="risk-title">Security & Technical Surface</span>
+                            <span class="risk-level risk-normal" id="risk-lvl-security">Low</span>
+                        </div>
+                        <div class="progress-bar-bg-mini"><div class="progress-bar-fill-mini bg-green" id="risk-progress-security" style="width: 25%"></div></div>
+                    </div>
+
+                    <!-- Legal & Compliance -->
+                    <div class="risk-tab-item" data-risk="legal">
+                        <div class="risk-tab-header">
+                            <span class="risk-title">Legal & Compliance Exposure</span>
+                            <span class="risk-level risk-normal" id="risk-lvl-legal">Low</span>
+                        </div>
+                        <div class="progress-bar-bg-mini"><div class="progress-bar-fill-mini bg-green" id="risk-progress-legal" style="width: 20%"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Interactive Dynamic Vulnerability Diagnostic Console -->
+            <div class="glass-card console-card bg-console-pane">
+                <div class="risk-details-content" id="risk-details-pane">
+                    <h3 class="accent-text" id="risk-active-title">Business & Market Risk Assessment</h3>
+                    <p class="risk-details-desc" id="risk-active-desc">Competitor density combined with customer acquisition costs creates the primary operational barrier. A detailed mitigation plan is required below.</p>
+                    
+                    <div class="risk-mitigation-box">
+                        <h5>AI Recommended Mitigation Blueprint:</h5>
+                        <ul class="mitigation-bullets" id="risk-active-bullets">
+                            <li>Focus on narrow niche (hyperlocal logistics) rather than general target audiences to keep customer acquisition costs low.</li>
+                            <li>Establish high product retention metrics before expanding scale budgets.</li>
+                            <li>Create channel integrations with localized distributors.</li>
+                        </ul>
+                    </div>
+
+                    <div class="risk-sim-badge">
+                        <span class="sim-pill orange" id="risk-active-impact">Impact: Medium-High</span>
+                        <span class="sim-pill blue" id="risk-active-action">Timeline: Immediate Action</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5 & 7. Sponsor & Investor Discovery & Funding Opportunities -->
+    <section class="section-padding" id="investors">
+        <div class="section-header">
+            <h2 class="section-title">Funding, Sponsors & <br><span class="gradient-text">Investor Matching Engine</span></h2>
+            <p class="section-desc">Connect with venture capital firms, angel networks, accelerators, and government schemes matching your startup industry.</p>
+        </div>
+
+        <div class="container grid-two-cols">
+            <!-- Left: Investor Matching Console -->
+            <div class="glass-card">
+                <div class="card-header-accent border-purple">
+                    <span class="header-icon text-purple">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                    </span>
+                    <h3>Funding Match Parameters</h3>
+                </div>
+                
+                <div class="interactive-form">
+                    <div class="form-group">
+                        <label for="funding-stage">Current Funding Stage</label>
+                        <select id="funding-stage" class="form-control">
+                            <option value="pre-seed" selected>Pre-Seed (Idea / MVP)</option>
+                            <option value="seed">Seed (Initial Traction)</option>
+                            <option value="series-a">Series A (Growth Scale)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="matching-geography">Target Market / Region</label>
+                        <select id="matching-geography" class="form-control">
+                            <option value="global" selected>Global / North America</option>
+                            <option value="europe">Europe</option>
+                            <option value="apac">Asia-Pacific</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-secondary btn-block" id="btn-run-investor-match">Find Matching Capital Sources</button>
+                </div>
+            </div>
+
+            <!-- Right: Interactive Match List -->
+            <div class="glass-card console-card scroll-list-card">
+                <div class="scroll-list-header">
+                    <h4>Matches Detected</h4>
+                    <span class="badge badge-purple" id="match-count-badge">5 Sources</span>
+                </div>
+                
+                <div class="scroll-list-items" id="investors-match-list">
+                    <!-- Prepopulated with Default Seeds, JS can alter based on choices -->
+                    <div class="match-item glass-card">
+                        <div class="match-meta">
+                            <span class="match-logo-placeholder p-blue">N</span>
+                            <div>
+                                <h5>Nexus Venture Partners</h5>
+                                <p class="match-subtitle">Early-stage SaaS, Cleantech & AI systems</p>
+                            </div>
+                        </div>
+                        <div class="match-details">
+                            <span>Ticket: $250k - $1.5M</span>
+                            <span class="match-badge">94% Match</span>
+                        </div>
+                    </div>
+
+                    <div class="match-item glass-card">
+                        <div class="match-meta">
+                            <span class="match-logo-placeholder p-purple">A</span>
+                            <div>
+                                <h5>Apex Angels Circle</h5>
+                                <p class="match-subtitle">General technology, Fintech, E-Commerce</p>
+                            </div>
+                        </div>
+                        <div class="match-details">
+                            <span>Ticket: $50k - $200k</span>
+                            <span class="match-badge">87% Match</span>
+                        </div>
+                    </div>
+
+                    <div class="match-item glass-card">
+                        <div class="match-meta">
+                            <span class="match-logo-placeholder p-cyan">Y</span>
+                            <div>
+                                <h5>Y-Combinator Accelerator</h5>
+                                <p class="match-subtitle">Global cohort funding for breakthrough applications</p>
+                            </div>
+                        </div>
+                        <div class="match-details">
+                            <span>Ticket: $500k standard uncapped</span>
+                            <span class="match-badge">82% Match</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Startup Events Hub -->
+    <section class="section-padding section-alt" id="events">
+        <div class="section-header">
+            <h2 class="section-title">Startup <span class="gradient-text">Events Hub</span></h2>
+            <p class="section-desc">Explore upcoming high-impact hackathons, pitch events, panels, and regional workshops.</p>
+        </div>
+
+        <div class="container">
+            <div class="events-filter-bar glass-card">
+                <button class="event-filter active" data-type="all">All Events</button>
+                <button class="event-filter" data-type="hackathons">Hackathons</button>
+                <button class="event-filter" data-type="conferences">Conferences</button>
+                <button class="event-filter" data-type="pitch">Pitch Contests</button>
+            </div>
+
+            <div class="events-grid" id="events-list-container">
+                <!-- Event Card 1 -->
+                <div class="glass-card event-card" data-event-type="hackathons">
+                    <div class="event-date-badge">
+                        <span class="month">JUN</span>
+                        <span class="day">18</span>
+                    </div>
+                    <div class="event-info">
+                        <span class="event-tag tag-cyan">Hackathon</span>
+                        <h4>Global AI Hackathon 2026</h4>
+                        <p class="event-description">Build production-grade AI agents. Compete with developers globally for $100k in APIs and grants.</p>
+                        <div class="event-meta">
+                            <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Online / Discord</span>
+                            <a href="#" class="event-link">Register Now →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Card 2 -->
+                <div class="glass-card event-card" data-event-type="conferences">
+                    <div class="event-date-badge">
+                        <span class="month">JUL</span>
+                        <span class="day">05</span>
+                    </div>
+                    <div class="event-info">
+                        <span class="event-tag tag-purple">Conference</span>
+                        <h4>SaaS Founder Summit 2026</h4>
+                        <p class="event-description">Three days of networking, panel briefings, and seed-funding matching workshops with 200+ VCs.</p>
+                        <div class="event-meta">
+                            <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"></path><circle cx="12" cy="10" r="3"></circle></svg> San Francisco, CA</span>
+                            <a href="#" class="event-link">Register Now →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Card 3 -->
+                <div class="glass-card event-card" data-event-type="pitch">
+                    <div class="event-date-badge">
+                        <span class="month">AUG</span>
+                        <span class="day">12</span>
+                    </div>
+                    <div class="event-info">
+                        <span class="event-tag tag-blue">Pitch Contest</span>
+                        <h4>Ecosystem Pitch Showcase</h4>
+                        <p class="event-description">Pitch directly to early stage micro-VCs. Top winner walks away with $50k non-dilutive equity grant.</p>
+                        <div class="event-meta">
+                            <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Virtual / Zoom</span>
+                            <a href="#" class="event-link">Register Now →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. Tech Updates Center -->
+    <section class="section-padding" id="updates">
+        <div class="section-header">
+            <h2 class="section-title">Tech Updates & <br><span class="gradient-text">Ecosystem News</span></h2>
+            <p class="section-desc">Get real-time insights regarding emerging tech stacks, developer updates, and AI trends shaping startups globally.</p>
+        </div>
+
+        <div class="container updates-layout">
+            <!-- Featured Update -->
+            <div class="glass-card featured-update-card glow-cyan">
+                <div class="featured-img-placeholder">
+                    <div class="badge-featured">Trending Trend</div>
+                </div>
+                <div class="featured-content">
+                    <span class="update-meta">June 02, 2026 • AI Frontiers</span>
+                    <h3>Sovereign Models and Custom Neural Orchestration: The Next Decade of SaaS</h3>
+                    <p>Startups are pivoting away from monolithic API calls to custom sovereign models operating locally on Edge systems. We discuss the cost implications and how it impacts pre-seed runway allocations.</p>
+                    <a href="#" class="btn btn-outline btn-sm">Read Full Report</a>
+                </div>
+            </div>
+
+            <!-- List Updates -->
+            <div class="sub-updates-list">
+                <div class="glass-card mini-update-card">
+                    <span class="mini-meta">Fintech • 2 hours ago</span>
+                    <h5>VC Runway Allocation Strategies Shift in Q2 2026</h5>
+                    <p>New reports outline VCs requiring startups to reach positive margins within 12 months rather than focusing strictly on user volume expansion.</p>
+                </div>
+                <div class="glass-card mini-update-card">
+                    <span class="mini-meta">Cybersecurity • 1 day ago</span>
+                    <h5>New Threat Model Vulnerabilities Found in Open Source DBs</h5>
+                    <p>Ensure your infrastructure handles SQL bindings securely to bypass emerging vectors targeting vector search nodes.</p>
+                </div>
+                <div class="glass-card mini-update-card">
+                    <span class="mini-meta">AI Tech • 2 days ago</span>
+                    <h5>Multi-modal Agent Architectures Enter General Availability</h5>
+                    <p>How models incorporating parallel vision, sound, and structured output elements speed up service automation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. AI Mentor -->
+    <section class="section-padding section-alt" id="mentor">
+        <div class="section-header">
+            <h2 class="section-title">Conversational <span class="gradient-text">AI Mentor</span></h2>
+            <p class="section-desc">Consult our intelligent mentor console regarding fundraising, pitching, regulatory hurdles, or roadmap structure advice.</p>
+        </div>
+
+        <div class="container max-width-md">
+            <div class="glass-card mentor-chat-panel glow-purple">
+                <div class="chat-header">
+                    <div class="mentor-avatar-wrap">
+                        <div class="mentor-avatar">M</div>
+                        <div class="online-indicator"></div>
+                    </div>
+                    <div>
+                        <h4>AI Advisor Engine v2.4</h4>
+                        <p class="subtext">Specialized in seed-stage planning & product strategies</p>
+                    </div>
+                </div>
+
+                <div class="chat-conversation-history" id="chat-messages-container">
+                    <!-- Assistant Default Greetings -->
+                    <div class="chat-msg system">
+                        <div class="msg-bubble">
+                            Welcome! I am your AI Mentor. Let me help you with your startup questions. You can ask:
+                            <div class="quick-suggest-chips">
+                                <button class="suggest-chip" onclick="window.sendMentorMessage('Give me a pre-seed pitch outline')">Pitch Outline</button>
+                                <button class="suggest-chip" onclick="window.sendMentorMessage('How should I structure my tech team?')">Team Structure</button>
+                                <button class="suggest-chip" onclick="window.sendMentorMessage('What metrics do angel investors look for?')">Investor Metrics</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="mentor-chat-form" class="chat-input-bar">
+                    <input type="text" id="mentor-chat-input" class="form-control-chat" placeholder="Ask a startup, funding, or strategy question..." required autocomplete="off">
+                    <button type="submit" class="btn btn-primary btn-chat-send" id="btn-chat-submit">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- 11. Pricing Section -->
+    <section class="section-padding" id="pricing">
+        <div class="section-header">
+            <h2 class="section-title">Transparent, Scalable <span class="gradient-text">Pricing</span></h2>
+            <p class="section-desc">Unlock advanced AI analysis runs, matching filters, and vulnerability checks suited to your growth scale.</p>
+            
+            <div class="pricing-toggle-wrap">
+                <span class="toggle-label" id="toggle-label-monthly">Monthly</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="billing-cycle-checkbox">
+                    <span class="slider round"></span>
+                </label>
+                <span class="toggle-label" id="toggle-label-yearly">Yearly <span class="save-tag">Save 20%</span></span>
+            </div>
+        </div>
+
+        <div class="container pricing-cards-grid">
+            <!-- Free Plan -->
+            <div class="glass-card pricing-card">
+                <div class="pricing-plan-header">
+                    <h4>Basic Sandbox</h4>
+                    <p class="plan-desc">For validating initial side concepts</p>
+                </div>
+                <div class="price-box">
+                    <span class="currency">$</span>
+                    <span class="price-val" id="price-free">0</span>
+                    <span class="duration" id="duration-free">/mo</span>
+                </div>
+                <ul class="features-list">
+                    <li>3 Idea Scans / month</li>
+                    <li>Basic Competitor lists (up to 3)</li>
+                    <li>Overview Vulnerability checklist</li>
+                    <li>Standard Community forum support</li>
+                </ul>
+                <a href="#analyzer" class="btn btn-outline btn-block">Get Started Free</a>
+            </div>
+
+            <!-- Pro Plan -->
+            <div class="glass-card pricing-card featured-pricing glow-purple">
+                <div class="popular-tag">MOST POPULAR</div>
+                <div class="pricing-plan-header">
+                    <h4>Founder Pro</h4>
+                    <p class="plan-desc">For scaling startups ready to pitch</p>
+                </div>
+                <div class="price-box">
+                    <span class="currency">$</span>
+                    <span class="price-val" id="price-pro">49</span>
+                    <span class="duration" id="duration-pro">/mo</span>
+                </div>
+                <ul class="features-list">
+                    <li>Unlimited Idea Analyses</li>
+                    <li>Deep Competitor Matrix & SWOT</li>
+                    <li>Full Vulnerability Mitigation Blueprints</li>
+                    <li>Sponsor & VC matching connectors</li>
+                    <li>24/7 Priority AI Mentor consultation</li>
+                </ul>
+                <a href="#analyzer" class="btn btn-primary btn-block">Upgrade to Pro</a>
+            </div>
+
+            <!-- Enterprise Plan -->
+            <div class="glass-card pricing-card">
+                <div class="pricing-plan-header">
+                    <h4>Studio / VC Suite</h4>
+                    <p class="plan-desc">For incubators and startup studios</p>
+                </div>
+                <div class="price-box">
+                    <span class="currency">$</span>
+                    <span class="price-val" id="price-enterprise">199</span>
+                    <span class="duration" id="duration-enterprise">/mo</span>
+                </div>
+                <ul class="features-list">
+                    <li>Multi-project pipeline dashboards</li>
+                    <li>API access for bulk concept ingestion</li>
+                    <li>White-labeled valuation reports</li>
+                    <li>Dedicated accounts manager</li>
+                    <li>Custom legal & tax scan rules</li>
+                </ul>
+                <a href="#analyzer" class="btn btn-outline btn-block">Contact Sales</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 12. Testimonials -->
+    <section class="section-padding section-alt" id="testimonials">
+        <div class="section-header">
+            <h2 class="section-title">Trusted by <span class="gradient-text">Founders Worldwide</span></h2>
+            <p class="section-desc">See how builders around the globe leveraged Startup Insight AI to secure seed capital and optimize operations.</p>
+        </div>
+
+        <div class="container testimonial-slider-container">
+            <div class="testimonial-track" id="testimonial-carousel">
+                <!-- Slide 1 -->
+                <div class="testimonial-slide active">
+                    <p class="quote">"Startup Insight AI identified a critical compliance vulnerability in our fintech model that saved us weeks of audit iterations. We secured our $1.5M Seed round 3 weeks later!"</p>
+                    <div class="founder-info">
+                        <span class="founder-avatar-placeholder">SM</span>
+                        <div>
+                            <h5>Sarah Miller</h5>
+                            <p class="founder-title">Co-Founder, PayGrid Technologies</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slide 2 -->
+                <div class="testimonial-slide">
+                    <p class="quote">"The Competitor Discovery scanner mapped two stealth-stage logistics competitors we hadn't noticed. Adjusting our differentiation metrics before pitching VC was key."</p>
+                    <div class="founder-info">
+                        <span class="founder-avatar-placeholder">DK</span>
+                        <div>
+                            <h5>David Kross</h5>
+                            <p class="founder-title">CTO, DeliverX Logistics</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 3 -->
+                <div class="testimonial-slide">
+                    <p class="quote">"Our government grant matched successfully on our first attempt. The matching engine identified localized cleantech opportunities that were completely invisible to Google."</p>
+                    <div class="founder-info">
+                        <span class="founder-avatar-placeholder">AL</span>
+                        <div>
+                            <h5>Aria Lin</h5>
+                            <p class="founder-title">CEO, Solaria Power</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Carousel navigation buttons -->
+            <div class="carousel-nav-btns">
+                <button class="carousel-btn prev" id="carousel-prev-btn" aria-label="Previous Testimonial">←</button>
+                <button class="carousel-btn next" id="carousel-next-btn" aria-label="Next Testimonial">→</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 13. FAQ -->
+    <section class="section-padding" id="faq">
+        <div class="section-header">
+            <h2 class="section-title">Frequently Asked <span class="gradient-text">Questions</span></h2>
+            <p class="section-desc">Get quick answers regarding model calculations, matching algorithms, data privacy, and runway setups.</p>
+        </div>
+
+        <div class="container max-width-md">
+            <div class="faq-accordion-group">
+                <!-- Accordion 1 -->
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>How accurate are the AI feasibility and risk scores?</span>
+                        <span class="faq-toggle-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Our scoring matrices are built on semantic patterns collected from thousands of VC pitches, market size data sets, and regulatory compliance guidelines. While they do not constitute legal advice, they demonstrate high correlation (94.8%) with early stage VC evaluation standards.</p>
+                    </div>
+                </div>
+
+                <!-- Accordion 2 -->
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Is my startup idea kept private and secure?</span>
+                        <span class="faq-toggle-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes. All ideas entered into the Startup Insight AI analyzer console are fully encrypted in transit and rest. We do not use user concepts to train public foundational LLM systems. Your ideas remain exclusively your proprietary intellectual property.</p>
+                    </div>
+                </div>
+
+                <!-- Accordion 3 -->
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>How often is the investor and sponsor matching database updated?</span>
+                        <span class="faq-toggle-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>We crawl and refresh accelerator applications, government grants, and active VC portfolios weekly. This ensures match scores align with actual active funds, regional location preferences, and recent ticket size distributions.</p>
+                    </div>
+                </div>
+
+                <!-- Accordion 4 -->
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Can I export my dashboard reports to show investors?</span>
+                        <span class="faq-toggle-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Absolutely. High-tier accounts can download complete PDF reports detailing feasibility matrices, SWOT graphs, risk tables, and competitor comparison summaries to package inside pitch decks or emails.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 14. Footer -->
+    <footer class="main-footer" id="footer">
+        <div class="container footer-grid">
+            <div class="footer-brand-wrap">
+                <a href="#" class="footer-logo">
+                    <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="32" height="32" rx="8" fill="url(#logo-grad-footer)"/>
+                        <path d="M16 7L24 15H19V25H13V15H8L16 7Z" fill="white"/>
+                        <circle cx="16" cy="16" r="3" fill="#00f0ff"/>
+                        <defs>
+                            <linearGradient id="logo-grad-footer" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#7c3aed"/>
+                                <stop offset="1" stop-color="#2563eb"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <span>Startup Insight AI</span>
+                </a>
+                <p class="footer-desc">Futuristic, investor-ready AI SaaS assisting founders globally to validate concepts, scan compliance risk, and secure scaling capital.</p>
+                <div class="newsletter-form-wrap">
+                    <label for="newsletter-email">Subscribe to Tech & Funding Alerts</label>
+                    <div class="newsletter-row">
+                        <input type="email" id="newsletter-email" placeholder="Enter your email" class="form-control-sm">
+                        <button class="btn btn-primary btn-sm" id="btn-subscribe">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-links-col">
+                <h5>Platform</h5>
+                <a href="#analyzer">Idea Analyzer</a>
+                <a href="#competitors">Competitor Mapping</a>
+                <a href="#vulnerabilities">Vulnerability Scans</a>
+                <a href="#investors">Investor Finder</a>
+                <a href="#dashboard">Analytics Console</a>
+            </div>
+
+            <div class="footer-links-col">
+                <h5>Resources</h5>
+                <a href="#updates">Ecosystem News</a>
+                <a href="#updates">AI Trend Reports</a>
+                <a href="#mentor">Roadmap Templates</a>
+                <a href="#faq">User FAQ</a>
+                <a href="#pricing">Pricing Plans</a>
+            </div>
+
+            <div class="footer-links-col">
+                <h5>Legal & Contact</h5>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Security Matrix</a>
+                <a href="mailto:support@startupinsight.ai">support@startupinsight.ai</a>
+                <span class="contact-num">1-800-INSIGHT (467-4448)</span>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 Startup Insight AI Inc. All rights reserved. Powered by Advanced AI Orchestration.</p>
+        </div>
+    </footer>
+
+    <!-- Main JavaScript Application Logic -->
+    <script src="app.js"></script>
+</body>
+</html>

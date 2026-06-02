@@ -1,0 +1,9 @@
+[build]
+  # Directs Netlify to look inside the frontend folder
+  base = "frontend"
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  # Directs Netlify to use Node 20
+  NODE_VERSION = "20"

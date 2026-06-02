@@ -1,0 +1,39 @@
+services:
+  # 1. Backend FastAPI Service
+  - type: web
+    name: startup-insight-api
+    env: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: startup-insight-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "60"
+
+  # 2. Frontend Next.js Service
+  - type: web
+    name: startup-insight-app
+    env: node
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        fromRoute:
+          type: web
+          name: startup-insight-api
+          property: url
+
+databases:
+  - name: startup-insight-db
+    plan: free
