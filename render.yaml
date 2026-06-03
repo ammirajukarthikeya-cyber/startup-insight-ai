@@ -18,6 +18,8 @@ services:
         value: HS256
       - key: ACCESS_TOKEN_EXPIRE_MINUTES
         value: "60"
+      - key: PYTHON_VERSION
+        value: 3.11.9
 
   # 2. Frontend Next.js Service
   - type: web
@@ -33,6 +35,8 @@ services:
           type: web
           name: startup-insight-api
           envVarKey: RENDER_EXTERNAL_URL
+      - key: NODE_VERSION
+        value: 20.11.1
 
 databases:
   - name: startup-insight-db
