@@ -8,8 +8,6 @@ from app.config import settings
 from app.routes import auth as auth_router, user as user_router, analyzer as analyzer_router, billing as billing_router, events as events_router, news as news_router, mentor as mentor_router, admin as admin_router
 from app import models, auth as security
 
-# Initialise DB tables on startup
-Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Startup Insight AI API",
@@ -45,6 +43,14 @@ def read_root():
 # Database Seeding on Startup
 @app.on_event("startup")
 def seed_database():
+    try:
+        # Create database tables if they do not exist yet
+        Base.metadata.create_all(bind=engine)
+    except Exception as e:
+        print(f"[DB INIT ERROR] Failed to create database tables: {e}")
+        # Re-raise so the process exits, but at least we get a clear log statement
+        raise e
+        
     db = next(get_db())
     try:
         # 1. Seed Default Admin Account if missing
