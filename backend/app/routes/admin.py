@@ -264,3 +264,37 @@ def reject_transaction(tx_id: int, admin: models.User = Depends(auth.get_current
         
     crud.create_audit_log(db, action=f"admin_rejected_tx_{tx.id}_user_{tx.user_id}", user_id=admin.id)
     return {"message": "Transaction rejected."}
+
+
+@router.put("/payment-settings", response_model=schemas.PaymentSettingResponse)
+def update_payment_settings(data: schemas.PaymentSettingUpdate, admin: models.User = Depends(auth.get_current_admin_user), db: Session = Depends(get_db)):
+    settings = db.query(models.PaymentSetting).first()
+    if not settings:
+        settings = models.PaymentSetting(
+            upi_id="ammirajukarthikeya@okaxis",
+            bank_name="State Bank of India",
+            account_holder="Ammiraju Karthikeya",
+            account_number="1234567890",
+            ifsc_code="SBIN0001234"
+        )
+        db.add(settings)
+        db.commit()
+        db.refresh(settings)
+        
+    if data.upi_id is not None:
+        settings.upi_id = data.upi_id
+    if data.bank_name is not None:
+        settings.bank_name = data.bank_name
+    if data.account_holder is not None:
+        settings.account_holder = data.account_holder
+    if data.account_number is not None:
+        settings.account_number = data.account_number
+    if data.ifsc_code is not None:
+        settings.ifsc_code = data.ifsc_code
+        
+    db.commit()
+    db.refresh(settings)
+    
+    crud.create_audit_log(db, action="admin_updated_payment_settings", user_id=admin.id)
+    return settings
+

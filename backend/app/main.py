@@ -220,5 +220,19 @@ def seed_database():
             db.commit()
             print("[SEED] Seeded default tech news updates feed.")
 
+        # 7. Seed Default Payment Settings if empty
+        if db.query(models.PaymentSetting).count() == 0:
+            payment_settings = models.PaymentSetting(
+                upi_id="ammirajukarthikeya@okaxis",
+                bank_name="State Bank of India",
+                account_holder="Ammiraju Karthikeya",
+                account_number="1234567890",
+                ifsc_code="SBIN0001234"
+            )
+            db.add(payment_settings)
+            db.commit()
+            print("[SEED] Created default payment settings.")
+
     finally:
         db.close()
+

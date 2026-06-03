@@ -191,3 +191,15 @@ class AuditLog(Base):
     timestamp = Column(DateTime, default=datetime.utcnow)
     
     user = relationship("User", back_populates="audit_logs")
+
+
+class PaymentSetting(Base):
+    __tablename__ = "payment_settings"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    upi_id = Column(String, default="ammirajukarthikeya@okaxis")
+    bank_name = Column(String, default="State Bank of India")
+    account_holder = Column(String, default="Ammiraju Karthikeya")
+    account_number = Column(String, default="1234567890")
+    ifsc_code = Column(String, default="SBIN0001234")
+

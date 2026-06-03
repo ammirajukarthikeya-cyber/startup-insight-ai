@@ -224,3 +224,21 @@ def submit_manual_payment(data: schemas.ManualPaymentSubmit, current_user: model
         "status": "pending",
         "message": "Payment reference submitted successfully! Admin will verify and activate your subscription shortly."
     }
+
+
+@router.get("/payment-settings", response_model=schemas.PaymentSettingResponse)
+def get_payment_settings(db: Session = Depends(get_db)):
+    settings = db.query(models.PaymentSetting).first()
+    if not settings:
+        settings = models.PaymentSetting(
+            upi_id="ammirajukarthikeya@okaxis",
+            bank_name="State Bank of India",
+            account_holder="Ammiraju Karthikeya",
+            account_number="1234567890",
+            ifsc_code="SBIN0001234"
+        )
+        db.add(settings)
+        db.commit()
+        db.refresh(settings)
+    return settings
+

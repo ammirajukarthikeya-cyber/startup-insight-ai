@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SubscriptionPlan } from '../types';
 import { api } from '../utils/api';
 
@@ -25,9 +25,34 @@ export default function PaymentModal({ plan, billingCycle, onClose, onSuccess, o
   const [upiId, setUpiId] = useState('');
   const [utr, setUtr] = useState('');
 
+  const [settings, setSettings] = useState({
+    upi_id: 'ammirajukarthikeya@okaxis',
+    bank_name: 'State Bank of India',
+    account_holder: 'Ammiraju Karthikeya',
+    account_number: '1234567890',
+    ifsc_code: 'SBIN0001234'
+  });
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const data = await api.get('/api/billing/payment-settings');
+        if (data) {
+          setSettings(data);
+        }
+      } catch (err) {
+        console.error('Failed to load billing settings', err);
+      }
+    };
+    fetchSettings();
+  }, []);
+
   const originalPrice = billingCycle === 'monthly' ? plan.monthly_price : plan.yearly_price;
   const discountAmount = couponApplied ? originalPrice * (discountPercent / 100) : 0;
   const finalPrice = Math.max(0, originalPrice - discountAmount);
+
+  const upiUrl = `upi://pay?pa=${settings.upi_id}&pn=${encodeURIComponent(settings.account_holder)}&am=${finalPrice.toFixed(2)}&tn=${encodeURIComponent(plan.name + ' Subscription')}&cu=INR`;
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiUrl)}`;
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) return;
@@ -154,7 +179,7 @@ export default function PaymentModal({ plan, billingCycle, onClose, onSuccess, o
               onClick={() => setPaymentMethod('upi')}
               className={`rounded-lg border px-3 py-2 text-xs font-bold transition flex flex-col items-center gap-1 ${paymentMethod === 'upi' ? 'border-cyan-500 bg-cyan-500/10 text-cyan-400' : 'border-white/10 text-slate-400 hover:bg-slate-800'}`}
             >
-              UPI Payments
+              UPI & Bank
             </button>
             <button 
               onClick={() => setPaymentMethod('paypal')}
@@ -200,32 +225,70 @@ export default function PaymentModal({ plan, billingCycle, onClose, onSuccess, o
 
           {paymentMethod === 'upi' && (
             <div className="space-y-3 flex flex-col items-center justify-center text-center">
-              <p className="text-[11px] text-purple-400 font-bold mb-1">Send exact amount of ₹{finalPrice.toFixed(2)} to UPI ID: ammirajukarthikeya@okaxis</p>
-              <input 
-                type="text" 
-                placeholder="Your UPI ID (e.g. user@okaxis)" 
-                value={upiId}
-                onChange={(e) => setUpiId(e.target.value)}
-                className="w-full rounded-lg border border-white/10 bg-slate-950 px-3 py-2 text-sm text-slate-200"
-              />
-              <input 
-                type="text" 
-                placeholder="Enter 12-Digit Transaction UTR / Ref No." 
-                maxLength={12}
-                value={utr}
-                onChange={(e) => setUtr(e.target.value.replace(/\s/g, ''))}
-                className="w-full rounded-lg border border-purple-500/30 bg-slate-950 px-3 py-2 text-sm text-slate-200 font-semibold text-center tracking-wide"
-                required
-              />
-              <div className="p-3 bg-white rounded-lg inline-block">
-                {/* Simulated UPI Scan QR Code placeholder */}
-                <div className="h-28 w-28 bg-slate-300 flex items-center justify-center border-2 border-slate-950 text-slate-950 font-bold text-xs tracking-wider">
-                  UPI QR CODE
+              <p className="text-[11px] text-cyan-400 font-bold mb-1">
+                Send exact amount of <span className="text-white">₹{finalPrice.toFixed(2)}</span> to UPI ID: <span className="text-white">{settings.upi_id}</span>
+              </p>
+
+              {/* Direct UPI App Redirect Link (Direct mobile pay option) */}
+              <a 
+                href={upiUrl}
+                className="w-full text-center block rounded-xl bg-gradient-to-r from-cyan-600/20 to-blue-600/20 hover:from-cyan-600/30 hover:to-blue-600/30 border border-cyan-500/30 py-2.5 text-xs font-bold text-cyan-300 shadow-md transition"
+              >
+                ⚡ Pay via UPI App Directly (Mobile Only)
+              </a>
+
+              <div className="p-3 bg-white rounded-xl inline-block shadow-lg mt-2">
+                {/* Dynamically generated scannable QR Code */}
+                <img 
+                  src={qrCodeUrl} 
+                  alt="UPI Payment QR Code" 
+                  className="h-32 w-32 object-contain" 
+                  onError={(e) => {
+                    // Fallback in case the network fails
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+              </div>
+              <p className="text-[9px] text-slate-400">Scan QR code using GPay, PhonePe, Paytm, or BHIM to pay</p>
+              
+              <div className="w-full text-left p-3.5 bg-slate-950/60 rounded-xl border border-white/5 space-y-1.5 mt-2">
+                <p className="text-[10px] text-purple-400 font-bold uppercase tracking-wider">Or Bank Account Transfer Details</p>
+                <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-slate-300 text-[10px]">
+                  <span className="text-slate-500">Bank Name:</span>
+                  <span className="font-semibold text-slate-200">{settings.bank_name}</span>
+
+                  <span className="text-slate-500">Holder Name:</span>
+                  <span className="font-semibold text-slate-200">{settings.account_holder}</span>
+
+                  <span className="text-slate-500">Account No:</span>
+                  <span className="font-semibold text-slate-200 font-mono">{settings.account_number}</span>
+
+                  <span className="text-slate-500">IFSC Code:</span>
+                  <span className="font-semibold text-slate-200 font-mono text-cyan-400">{settings.ifsc_code}</span>
                 </div>
               </div>
-              <p className="text-[10px] text-slate-400">Scan QR code, transfer, and enter UTR Ref above</p>
+
+              <div className="w-full space-y-2 mt-4">
+                <input 
+                  type="text" 
+                  placeholder="Your UPI ID or Bank Sender Name" 
+                  value={upiId}
+                  onChange={(e) => setUpiId(e.target.value)}
+                  className="w-full rounded-lg border border-white/10 bg-slate-950 px-3 py-2 text-sm text-slate-200"
+                />
+                <input 
+                  type="text" 
+                  placeholder="Enter 12-Digit Transaction UTR / Ref No." 
+                  maxLength={12}
+                  value={utr}
+                  onChange={(e) => setUtr(e.target.value.replace(/\s/g, ''))}
+                  className="w-full rounded-lg border border-cyan-500/30 bg-slate-950 px-3 py-2 text-sm text-slate-200 font-semibold text-center tracking-wide"
+                  required
+                />
+              </div>
             </div>
           )}
+
 
           {paymentMethod === 'paypal' && (
             <div className="text-center py-4 bg-slate-950/30 border border-dashed border-white/10 rounded-lg">

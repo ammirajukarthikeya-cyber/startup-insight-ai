@@ -92,6 +92,7 @@ export default function RegisterPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="w-full rounded-lg border border-white/10 bg-slate-950 px-4 py-3 text-sm text-slate-200"
+                suppressHydrationWarning
               />
             </div>
 
@@ -105,6 +106,7 @@ export default function RegisterPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 className="w-full rounded-lg border border-white/10 bg-slate-950 px-4 py-3 text-sm text-slate-200"
+                suppressHydrationWarning
               />
             </div>
 
@@ -112,6 +114,7 @@ export default function RegisterPage() {
               type="submit" 
               disabled={loading}
               className="w-full rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 py-3.5 text-xs font-bold text-white shadow-lg transition duration-200 disabled:opacity-50"
+              suppressHydrationWarning
             >
               {loading ? 'Submitting Details...' : 'Create Account'}
             </button>
@@ -133,6 +136,7 @@ export default function RegisterPage() {
                 onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
                 required
                 className="w-full rounded-lg border border-white/10 bg-slate-950 px-4 py-3 text-sm text-slate-200 tracking-[0.2em] text-center font-mono text-lg"
+                suppressHydrationWarning
               />
             </div>
 
@@ -140,6 +144,7 @@ export default function RegisterPage() {
               type="submit" 
               disabled={loading}
               className="w-full rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 py-3.5 text-xs font-bold text-white shadow-lg transition duration-200 disabled:opacity-50"
+              suppressHydrationWarning
             >
               {loading ? 'Verifying OTP...' : 'Verify OTP Code'}
             </button>
@@ -148,6 +153,7 @@ export default function RegisterPage() {
               type="button" 
               onClick={() => setPendingVerification(false)}
               className="w-full text-center text-xs font-bold text-slate-400 hover:text-white transition"
+              suppressHydrationWarning
             >
               ← Back to sign-up
             </button>

@@ -41,21 +41,37 @@ export default function AdminPage() {
   const [eventDate, setEventDate] = useState('');
   const [eventLoc, setEventLoc] = useState('');
 
+  // Payment settings admin states
+  const [adminUpiId, setAdminUpiId] = useState('');
+  const [adminBankName, setAdminBankName] = useState('');
+  const [adminAccountHolder, setAdminAccountHolder] = useState('');
+  const [adminAccountNumber, setAdminAccountNumber] = useState('');
+  const [adminIfscCode, setAdminIfscCode] = useState('');
+
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error'>('success');
 
   const fetchAdminData = async () => {
     try {
-      const [metricsData, listUsers, listPlans, listPending] = await Promise.all([
+      const [metricsData, listUsers, listPlans, listPending, paySettings] = await Promise.all([
         api.get('/api/admin/metrics'),
         api.get<any[]>('/api/admin/users'),
         api.get<SubscriptionPlan[]>('/api/billing/plans'),
-        api.get<any[]>('/api/admin/transactions/pending')
+        api.get<any[]>('/api/admin/transactions/pending'),
+        api.get<any>('/api/billing/payment-settings')
       ]);
       setMetrics(metricsData);
       setUserList(listUsers);
       setPlans(listPlans);
       setPendingTransactions(listPending);
+      
+      if (paySettings) {
+        setAdminUpiId(paySettings.upi_id || '');
+        setAdminBankName(paySettings.bank_name || '');
+        setAdminAccountHolder(paySettings.account_holder || '');
+        setAdminAccountNumber(paySettings.account_number || '');
+        setAdminIfscCode(paySettings.ifsc_code || '');
+      }
     } catch (err: any) {
       console.error('Failed to load admin metrics', err);
       setToastType('error');
@@ -65,6 +81,7 @@ export default function AdminPage() {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -183,6 +200,26 @@ export default function AdminPage() {
       setToastMessage(err.message || 'Posting event failed');
     }
   };
+
+  const handleUpdatePaymentSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await api.put('/api/admin/payment-settings', {
+        upi_id: adminUpiId,
+        bank_name: adminBankName,
+        account_holder: adminAccountHolder,
+        account_number: adminAccountNumber,
+        ifsc_code: adminIfscCode
+      });
+      setToastType('success');
+      setToastMessage('Payment receiving settings updated successfully!');
+      fetchAdminData();
+    } catch (err: any) {
+      setToastType('error');
+      setToastMessage(err.message || 'Failed to update payment settings');
+    }
+  };
+
 
   if (loading) {
     return (
@@ -580,8 +617,82 @@ export default function AdminPage() {
                 </form>
               </div>
             </div>
+
+            {/* Receiving Payment Details Form */}
+            <div className="rounded-xl bg-slate-900/40 border border-white/5 p-6 shadow-md border-cyan-500/10">
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-6 text-cyan-400">Receiving Payment & Bank Account Settings</h3>
+              <form onSubmit={handleUpdatePaymentSettings} className="space-y-4 text-xs">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="block text-slate-400 font-medium">Receiving UPI ID</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. yourname@upi" 
+                      value={adminUpiId}
+                      onChange={(e) => setAdminUpiId(e.target.value)}
+                      required
+                      className="w-full rounded bg-slate-950 border border-white/10 p-2.5 text-slate-200"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="block text-slate-400 font-medium">Bank Name</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. State Bank of India" 
+                      value={adminBankName}
+                      onChange={(e) => setAdminBankName(e.target.value)}
+                      required
+                      className="w-full rounded bg-slate-950 border border-white/10 p-2.5 text-slate-200"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <label className="block text-slate-400 font-medium">Account Holder Name</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. John Doe" 
+                      value={adminAccountHolder}
+                      onChange={(e) => setAdminAccountHolder(e.target.value)}
+                      required
+                      className="w-full rounded bg-slate-950 border border-white/10 p-2.5 text-slate-200"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="block text-slate-400 font-medium">Account Number</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. 1234567890" 
+                      value={adminAccountNumber}
+                      onChange={(e) => setAdminAccountNumber(e.target.value)}
+                      required
+                      className="w-full rounded bg-slate-950 border border-white/10 p-2.5 text-slate-200"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="block text-slate-400 font-medium">IFSC Code</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. SBIN0001234" 
+                      value={adminIfscCode}
+                      onChange={(e) => setAdminIfscCode(e.target.value)}
+                      required
+                      className="w-full rounded bg-slate-950 border border-white/10 p-2.5 text-slate-200 font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <button type="submit" className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-3 px-6 rounded-xl transition shadow-lg flex items-center gap-2">
+                    Save Payment Configurations
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         )}
+
 
         {activeTab === 'content' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start animate-in fade-in duration-300">

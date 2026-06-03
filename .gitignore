@@ -1,0 +1,26 @@
+# Python cache
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Databases
+*.db
+*.sqlite3
+
+# Environment variables
+.env
+.env.local
+backend/.env
+
+# Node build logs & modules
+node_modules/
+**/node_modules/
+.next/
+**/ .next/
+dist/
+build/
+out/
+tsconfig.tsbuildinfo

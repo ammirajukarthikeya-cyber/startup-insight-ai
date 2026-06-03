@@ -253,3 +253,24 @@ class ManualPaymentSubmit(BaseModel):
     amount: float
     payment_method: str # "UPI" or "Bank Transfer"
     utr_number: str     # The reference number (12-digits UTR)
+
+
+class PaymentSettingResponse(BaseModel):
+    id: int
+    upi_id: str
+    bank_name: str
+    account_holder: str
+    account_number: str
+    ifsc_code: str
+
+    class Config:
+        from_attributes = True
+
+
+class PaymentSettingUpdate(BaseModel):
+    upi_id: Optional[str] = None
+    bank_name: Optional[str] = None
+    account_holder: Optional[str] = None
+    account_number: Optional[str] = None
+    ifsc_code: Optional[str] = None
+
