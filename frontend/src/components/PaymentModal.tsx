@@ -23,6 +23,7 @@ export default function PaymentModal({ plan, billingCycle, onClose, onSuccess, o
   const [cardCvc, setCardCvc] = useState('');
   const [loading, setLoading] = useState(false);
   const [upiId, setUpiId] = useState('');
+  const [utr, setUtr] = useState('');
 
   const originalPrice = billingCycle === 'monthly' ? plan.monthly_price : plan.yearly_price;
   const discountAmount = couponApplied ? originalPrice * (discountPercent / 100) : 0;
@@ -43,32 +44,38 @@ export default function PaymentModal({ plan, billingCycle, onClose, onSuccess, o
 
   const handleProcessPayment = async () => {
     setLoading(true);
-    try {
-      // 1. Initiate checkout session
-      const session = await api.post('/api/billing/checkout', {
-        plan_id: plan.id,
-        billing_cycle: billingCycle,
-        coupon_code: couponApplied ? couponCode : null,
-        payment_method: paymentMethod.toUpperCase()
-      });
+    
+    let refId = '';
+    if (paymentMethod === 'card') {
+      if (cardNumber.length < 16) {
+        onFailure('Please enter a valid 16-Digit Card Number.');
+        setLoading(false);
+        return;
+      }
+      refId = `CARD-***${cardNumber.slice(-4)}`;
+    } else if (paymentMethod === 'upi') {
+      if (!utr || utr.trim().length < 6) {
+        onFailure('Please enter a valid UPI UTR / Reference Transaction ID.');
+        setLoading(false);
+        return;
+      }
+      refId = utr;
+    } else {
+      refId = `PAYPAL-REF-${Math.floor(100000 + Math.random() * 900000)}`;
+    }
 
-      // Simulate payment delay
-      setTimeout(async () => {
-        try {
-          // 2. Validate simulation success
-          const result = await api.post('/api/billing/simulate-payment', {
-            checkout_token: session.checkout_token,
-            status: 'success'
-          });
-          onSuccess(result.invoice_id);
-          setLoading(false);
-        } catch (err: any) {
-          onFailure(err.message || 'Payment simulation failed');
-          setLoading(false);
-        }
-      }, 1500);
+    try {
+      const res = await api.post('/api/billing/submit-manual-payment', {
+        plan_id: plan.id,
+        amount: finalPrice,
+        payment_method: paymentMethod.toUpperCase(),
+        utr_number: refId
+      });
+      
+      onSuccess(`PENDING:${res.message || 'Payment reference submitted successfully!'}`);
+      setLoading(false);
     } catch (err: any) {
-      onFailure(err.message || 'Failed to initiate payment');
+      onFailure(err.message || 'Failed to submit payment reference');
       setLoading(false);
     }
   };
@@ -193,27 +200,37 @@ export default function PaymentModal({ plan, billingCycle, onClose, onSuccess, o
 
           {paymentMethod === 'upi' && (
             <div className="space-y-3 flex flex-col items-center justify-center text-center">
+              <p className="text-[11px] text-purple-400 font-bold mb-1">Send exact amount of ₹{finalPrice.toFixed(2)} to UPI ID: ammirajukarthikeya@okaxis</p>
               <input 
                 type="text" 
-                placeholder="UPI ID (e.g. user@okhdfcbank)" 
+                placeholder="Your UPI ID (e.g. user@okaxis)" 
                 value={upiId}
                 onChange={(e) => setUpiId(e.target.value)}
-                className="w-full rounded-lg border border-white/10 bg-slate-950 px-3 py-2 text-sm text-slate-200 mb-2"
+                className="w-full rounded-lg border border-white/10 bg-slate-950 px-3 py-2 text-sm text-slate-200"
+              />
+              <input 
+                type="text" 
+                placeholder="Enter 12-Digit Transaction UTR / Ref No." 
+                maxLength={12}
+                value={utr}
+                onChange={(e) => setUtr(e.target.value.replace(/\s/g, ''))}
+                className="w-full rounded-lg border border-purple-500/30 bg-slate-950 px-3 py-2 text-sm text-slate-200 font-semibold text-center tracking-wide"
+                required
               />
               <div className="p-3 bg-white rounded-lg inline-block">
                 {/* Simulated UPI Scan QR Code placeholder */}
                 <div className="h-28 w-28 bg-slate-300 flex items-center justify-center border-2 border-slate-950 text-slate-950 font-bold text-xs tracking-wider">
-                  UPI MOCK QR
+                  UPI QR CODE
                 </div>
               </div>
-              <p className="text-[10px] text-slate-400">Scan QR code using BHIM, GooglePay, PhonePe, or PayTM apps</p>
+              <p className="text-[10px] text-slate-400">Scan QR code, transfer, and enter UTR Ref above</p>
             </div>
           )}
 
           {paymentMethod === 'paypal' && (
             <div className="text-center py-4 bg-slate-950/30 border border-dashed border-white/10 rounded-lg">
               <p className="text-sm text-slate-300 mb-2">Simulating Paypal gateway route redirection</p>
-              <p className="text-xs text-slate-400">Authorization window will open in sandbox environment</p>
+              <p className="text-xs text-slate-400">Pay to PayPal ID: ammirajukarthikeya@paypal</p>
             </div>
           )}
         </div>
@@ -221,7 +238,7 @@ export default function PaymentModal({ plan, billingCycle, onClose, onSuccess, o
         {/* Process button */}
         <button 
           onClick={handleProcessPayment}
-          disabled={loading || (paymentMethod === 'card' && cardNumber.length < 16)}
+          disabled={loading || (paymentMethod === 'card' && cardNumber.length < 16) || (paymentMethod === 'upi' && utr.trim().length < 6)}
           className="w-full rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 py-3 text-sm font-bold text-white shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50"
         >
           {loading ? (
@@ -230,10 +247,10 @@ export default function PaymentModal({ plan, billingCycle, onClose, onSuccess, o
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 0 1 4 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
-              Verifying transaction...
+              Submitting request...
             </>
           ) : (
-            `Authorize Sandbox Payment`
+            `Submit Payment for Admin Approval`
           )}
         </button>
       </div>

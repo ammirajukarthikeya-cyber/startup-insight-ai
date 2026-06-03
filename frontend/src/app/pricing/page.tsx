@@ -32,10 +32,14 @@ export default function PricingPage() {
     fetchPlans();
   }, []);
 
-  const handleCheckoutSuccess = async (invoiceId: string) => {
+  const handleCheckoutSuccess = async (message: string) => {
     setSelectedPlan(null);
     setToastType('success');
-    setToastMessage(`Payment simulation successful! Invoice generated: ${invoiceId}`);
+    if (message.startsWith('PENDING:')) {
+      setToastMessage(message.replace('PENDING:', ''));
+    } else {
+      setToastMessage(`Payment successful! Invoice generated: ${message}`);
+    }
     await refreshProfile();
   };
 

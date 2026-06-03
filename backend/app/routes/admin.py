@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from datetime import datetime
+from datetime import datetime, timedelta
+import random
 from app.database import get_db
 from app import schemas, crud, models, auth
 
@@ -179,3 +180,87 @@ def delete_tech_news(news_id: int, admin: models.User = Depends(auth.get_current
         raise HTTPException(status_code=404, detail="News post not found")
     crud.create_audit_log(db, action=f"deleted_news_id_{news_id}", user_id=admin.id)
     return {"message": "News article deleted successfully"}
+
+
+@router.get("/transactions/pending")
+def list_pending_transactions(admin: models.User = Depends(auth.get_current_admin_user), db: Session = Depends(get_db)):
+    # Find all transactions where status is Pending
+    pending = db.query(models.Transaction).filter(
+        models.Transaction.status == "Pending"
+    ).order_by(models.Transaction.timestamp.desc()).all()
+    
+    results = []
+    for tx in pending:
+        user = db.query(models.User).filter(models.User.id == tx.user_id).first()
+        plan = db.query(models.SubscriptionPlan).filter(models.SubscriptionPlan.id == tx.plan_id).first()
+        results.append({
+            "id": tx.id,
+            "user_email": user.email if user else "Unknown User",
+            "plan_name": plan.name if plan else "Unknown Plan",
+            "plan_id": tx.plan_id,
+            "amount": tx.amount,
+            "payment_gateway": tx.payment_gateway,
+            "gateway_payment_id": tx.gateway_payment_id, # UTR / Reference
+            "invoice_id": tx.invoice_id,
+            "timestamp": tx.timestamp
+        })
+    return results
+
+
+@router.post("/transactions/{tx_id}/approve")
+def approve_transaction(tx_id: int, admin: models.User = Depends(auth.get_current_admin_user), db: Session = Depends(get_db)):
+    tx = db.query(models.Transaction).filter(models.Transaction.id == tx_id).first()
+    if not tx:
+        raise HTTPException(status_code=404, detail="Transaction not found")
+    if tx.status != "Pending":
+        raise HTTPException(status_code=400, detail="Transaction is not pending approval")
+        
+    plan = db.query(models.SubscriptionPlan).filter(models.SubscriptionPlan.id == tx.plan_id).first()
+    if not plan:
+        raise HTTPException(status_code=404, detail="Associated subscription plan not found")
+        
+    # 1. Update transaction status
+    tx.status = "Success"
+    tx.invoice_id = f"INV-{random.randint(100000, 999999)}"
+    
+    # 2. Update user profile to new plan
+    user = db.query(models.User).filter(models.User.id == tx.user_id).first()
+    if user:
+        user.subscription_tier = plan.name
+        user.subscription_status = "active"
+        user.subscription_ends_at = datetime.utcnow() + timedelta(days=30)
+        
+    db.commit()
+    
+    # 3. Notify user via email
+    subject = "Subscription Activated! - Startup Insight AI"
+    body = f"Congratulations!\n\nYour manual payment of INR {tx.amount} has been verified by the administrator.\n\nYour account has been upgraded to the {plan.name} plan.\n\nEnjoy your validation runs!"
+    from app.email import send_email
+    if user:
+        send_email(user.email, subject, body)
+        
+    crud.create_audit_log(db, action=f"admin_approved_tx_{tx.id}_user_{tx.user_id}_tier_{plan.name}", user_id=admin.id)
+    return {"message": f"Transaction approved. User upgraded to {plan.name}."}
+
+
+@router.post("/transactions/{tx_id}/reject")
+def reject_transaction(tx_id: int, admin: models.User = Depends(auth.get_current_admin_user), db: Session = Depends(get_db)):
+    tx = db.query(models.Transaction).filter(models.Transaction.id == tx_id).first()
+    if not tx:
+        raise HTTPException(status_code=404, detail="Transaction not found")
+    if tx.status != "Pending":
+        raise HTTPException(status_code=400, detail="Transaction is not pending approval")
+        
+    tx.status = "Failed"
+    db.commit()
+    
+    # Notify user via email
+    user = db.query(models.User).filter(models.User.id == tx.user_id).first()
+    if user:
+        subject = "Subscription Payment Rejected - Startup Insight AI"
+        body = f"Hello,\n\nThe administrator could not verify your manual payment reference (UTR: {tx.gateway_payment_id}). Your subscription upgrade request was rejected.\n\nPlease double check details and submit again."
+        from app.email import send_email
+        send_email(user.email, subject, body)
+        
+    crud.create_audit_log(db, action=f"admin_rejected_tx_{tx.id}_user_{tx.user_id}", user_id=admin.id)
+    return {"message": "Transaction rejected."}

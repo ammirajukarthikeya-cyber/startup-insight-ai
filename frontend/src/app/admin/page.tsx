@@ -15,6 +15,7 @@ export default function AdminPage() {
   const [metrics, setMetrics] = useState<any>(null);
   const [userList, setUserList] = useState<any[]>([]);
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
+  const [pendingTransactions, setPendingTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Forms states
@@ -45,14 +46,16 @@ export default function AdminPage() {
 
   const fetchAdminData = async () => {
     try {
-      const [metricsData, listUsers, listPlans] = await Promise.all([
+      const [metricsData, listUsers, listPlans, listPending] = await Promise.all([
         api.get('/api/admin/metrics'),
         api.get<any[]>('/api/admin/users'),
-        api.get<SubscriptionPlan[]>('/api/billing/plans')
+        api.get<SubscriptionPlan[]>('/api/billing/plans'),
+        api.get<any[]>('/api/admin/transactions/pending')
       ]);
       setMetrics(metricsData);
       setUserList(listUsers);
       setPlans(listPlans);
+      setPendingTransactions(listPending);
     } catch (err: any) {
       console.error('Failed to load admin metrics', err);
       setToastType('error');
@@ -338,6 +341,81 @@ export default function AdminPage() {
 
         {activeTab === 'billing' && (
           <div className="space-y-8 animate-in fade-in duration-300">
+            {/* List of pending approvals */}
+            <div className="rounded-xl bg-slate-900/40 border border-white/5 p-6 shadow-md border-purple-500/10">
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 text-purple-400">Pending Subscription Approvals</h3>
+              {pendingTransactions.length === 0 ? (
+                <p className="text-xs text-slate-500 py-4 text-center">No pending offline payment validation requests found.</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs text-left text-slate-300">
+                    <thead className="bg-slate-950/60 text-slate-400 uppercase tracking-wider">
+                      <tr>
+                        <th className="p-3">User Email</th>
+                        <th className="p-3">Requested Plan</th>
+                        <th className="p-3">Amount</th>
+                        <th className="p-3">Gateway</th>
+                        <th className="p-3">Reference (UTR / ID)</th>
+                        <th className="p-3">Date</th>
+                        <th className="p-3 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pendingTransactions.map((tx) => (
+                        <tr key={tx.id} className="border-b border-white/5 hover:bg-slate-950/20">
+                          <td className="p-3 font-semibold text-slate-100">{tx.user_email}</td>
+                          <td className="p-3 text-cyan-400 font-bold">{tx.plan_name}</td>
+                          <td className="p-3">₹{tx.amount}</td>
+                          <td className="p-3">{tx.payment_gateway}</td>
+                          <td className="p-3">
+                            <span className="font-mono bg-slate-950/60 text-purple-300 px-2.5 py-1 rounded text-xxs border border-purple-500/10">
+                              {tx.gateway_payment_id}
+                            </span>
+                          </td>
+                          <td className="p-3 text-slate-500">{new Date(tx.timestamp).toLocaleDateString()}</td>
+                          <td className="p-3 text-right flex justify-end gap-2">
+                            <button 
+                              onClick={async () => {
+                                try {
+                                  await api.post(`/api/admin/transactions/${tx.id}/approve`);
+                                  setToastType('success');
+                                  setToastMessage(`Approved subscription for ${tx.user_email}!`);
+                                  fetchAdminData();
+                                } catch (err: any) {
+                                  setToastType('error');
+                                  setToastMessage(err.message || 'Failed to approve payment');
+                                }
+                              }}
+                              className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded-lg text-xxs transition shadow-md"
+                            >
+                              Approve
+                            </button>
+                            <button 
+                              onClick={async () => {
+                                if (!confirm(`Are you sure you want to reject this payment request for ${tx.user_email}?`)) return;
+                                try {
+                                  await api.post(`/api/admin/transactions/${tx.id}/reject`);
+                                  setToastType('success');
+                                  setToastMessage(`Rejected request for ${tx.user_email}`);
+                                  fetchAdminData();
+                                } catch (err: any) {
+                                  setToastType('error');
+                                  setToastMessage(err.message || 'Failed to reject payment');
+                                }
+                              }}
+                              className="bg-rose-950 hover:bg-rose-900 text-rose-400 border border-rose-500/20 px-3 py-1.5 rounded-lg text-xxs transition shadow-md"
+                            >
+                              Reject
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
             {/* List of current plans with inline price editor */}
             <div className="rounded-xl bg-slate-900/40 border border-white/5 p-6">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-6">Manage Subscription Plans & Prices</h3>

@@ -246,3 +246,10 @@ class AdminSummaryMetrics(BaseModel):
     total_analyses: int
     total_registrations: int
     recent_transactions: List[TransactionResponse]
+
+
+class ManualPaymentSubmit(BaseModel):
+    plan_id: int
+    amount: float
+    payment_method: str # "UPI" or "Bank Transfer"
+    utr_number: str     # The reference number (12-digits UTR)

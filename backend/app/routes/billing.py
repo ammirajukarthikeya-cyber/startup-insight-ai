@@ -184,3 +184,43 @@ def get_transaction_history(current_user: models.User = Depends(auth.get_current
         models.Transaction.user_id == current_user.id
     ).order_by(models.Transaction.timestamp.desc()).all()
     return txs
+
+
+@router.post("/submit-manual-payment")
+def submit_manual_payment(data: schemas.ManualPaymentSubmit, current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    plan = crud.get_plan(db, data.plan_id)
+    if not plan:
+        raise HTTPException(status_code=404, detail="Subscription plan not found")
+        
+    # Check if a pending transaction already exists
+    existing = db.query(models.Transaction).filter(
+        models.Transaction.user_id == current_user.id,
+        models.Transaction.status == "Pending",
+        models.Transaction.plan_id == plan.id
+    ).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="You already have a pending verification request for this plan.")
+        
+    # Log transaction as Pending
+    tx = models.Transaction(
+        user_id=current_user.id,
+        plan_id=plan.id,
+        amount=data.amount,
+        currency="INR",
+        status="Pending",
+        payment_gateway=data.payment_method,
+        gateway_payment_id=data.utr_number, # UPI ref number
+        invoice_id=f"PEND-{random.randint(100000, 999999)}"
+    )
+    db.add(tx)
+    db.commit()
+    
+    crud.create_audit_log(
+        db, 
+        action=f"manual_payment_submitted_plan_{plan.name}_utr_{data.utr_number}", 
+        user_id=current_user.id
+    )
+    return {
+        "status": "pending",
+        "message": "Payment reference submitted successfully! Admin will verify and activate your subscription shortly."
+    }
