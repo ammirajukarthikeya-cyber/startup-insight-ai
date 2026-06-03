@@ -21,7 +21,7 @@ def create_user(db: Session, user: schemas.UserCreate, hashed_pass: str):
         hashed_password=hashed_pass,
         otp_code=otp,
         otp_expires_at=expires,
-        is_verified=False,
+        is_verified=True,
         role="admin" if user.email.startswith("admin@") else "user" # Auto-admin for matching emails
     )
     db.add(db_user)

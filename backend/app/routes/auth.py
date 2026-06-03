@@ -60,9 +60,6 @@ def login(data: schemas.UserLogin, db: Session = Depends(get_db)):
         crud.create_audit_log(db, action="login_failed", ip_address=data.ip_address)
         raise HTTPException(status_code=400, detail="Incorrect email or password")
         
-    if not user.is_verified:
-        raise HTTPException(status_code=400, detail="Please verify your email address first")
-        
     if not user.is_active:
         raise HTTPException(status_code=400, detail="This account has been suspended")
         

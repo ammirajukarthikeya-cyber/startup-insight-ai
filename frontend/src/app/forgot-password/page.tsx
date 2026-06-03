@@ -2,52 +2,58 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../context/AuthContext';
+import { api } from '../../utils/api';
 import Link from 'next/link';
 
-export default function RegisterPage() {
-  const { register, verifyEmail } = useAuth();
+export default function ForgotPasswordPage() {
   const router = useRouter();
 
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [otpCode, setOtpCode] = useState('');
-  const [pendingVerification, setPendingVerification] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [pendingReset, setPendingReset] = useState(false);
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const handleRegisterSubmit = async (e: React.FormEvent) => {
+  const handleRequestSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess('');
     setLoading(true);
     try {
-      await register(email, password);
-      setSuccess('Account created successfully! Redirecting to login...');
-      setTimeout(() => {
-        router.push('/login');
-      }, 1500);
+      const res = await api.post('/api/auth/reset-password-request', { email });
+      setPendingReset(true);
+      if (res && res.otp_code) {
+        setSuccess(`Reset OTP code: ${res.otp_code} (also sent to your email). Please enter it below along with your new password.`);
+      } else {
+        setSuccess('If the account exists, a 6-digit password reset OTP code has been sent to your email.');
+      }
     } catch (err: any) {
-      setError(err.message || 'Registration failed. Try a different email.');
+      setError(err.message || 'Failed to request password reset. Try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleVerifySubmit = async (e: React.FormEvent) => {
+  const handleConfirmSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     setLoading(true);
     try {
-      await verifyEmail(email, otpCode);
-      setSuccess('Email successfully verified! Redirecting to login...');
+      await api.post('/api/auth/reset-password-confirm', {
+        email,
+        otp_code: otpCode,
+        new_password: newPassword,
+      });
+      setSuccess('Password reset successful! Redirecting to login...');
       setTimeout(() => {
         router.push('/login');
       }, 1500);
     } catch (err: any) {
-      setError(err.message || 'Invalid verification OTP code');
+      setError(err.message || 'Invalid or expired verification code');
     } finally {
       setLoading(false);
     }
@@ -59,12 +65,12 @@ export default function RegisterPage() {
         
         <div className="text-center mb-8">
           <h2 className="text-2xl font-black text-white">
-            {pendingVerification ? 'Verify Your Email' : 'Create Account'}
+            {pendingReset ? 'Reset Your Password' : 'Forgot Password?'}
           </h2>
           <p className="text-xs text-slate-400 mt-2">
-            {pendingVerification 
-              ? 'Enter the 6-digit code. (For sandbox validation, use master code 123456)' 
-              : 'Register to validate startup ideas and unlock VC opportunities'
+            {pendingReset 
+              ? 'Enter the 6-digit OTP code and choose your new password. (Sandbox code: 123456)' 
+              : 'Enter your email and we will send you an OTP to reset your password'
             }
           </p>
         </div>
@@ -80,8 +86,8 @@ export default function RegisterPage() {
           </div>
         )}
 
-        {!pendingVerification ? (
-          <form onSubmit={handleRegisterSubmit} className="space-y-5">
+        {!pendingReset ? (
+          <form onSubmit={handleRequestSubmit} className="space-y-5">
             <div>
               <label htmlFor="email" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Email Address</label>
               <input 
@@ -95,35 +101,22 @@ export default function RegisterPage() {
               />
             </div>
 
-            <div>
-              <label htmlFor="password" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Secure Password</label>
-              <input 
-                id="password"
-                type="password" 
-                placeholder="••••••••••••" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full rounded-lg border border-white/10 bg-slate-950 px-4 py-3 text-sm text-slate-200"
-              />
-            </div>
-
             <button 
               type="submit" 
               disabled={loading}
-              className="w-full rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 py-3.5 text-xs font-bold text-white shadow-lg transition duration-200 disabled:opacity-50"
+              className="w-full rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 py-3.5 text-xs font-bold text-white shadow-lg tracking-wide transition duration-200 disabled:opacity-50"
             >
-              {loading ? 'Submitting Details...' : 'Create Account'}
+              {loading ? 'Sending OTP Code...' : 'Send Password Reset OTP'}
             </button>
             
             <p className="text-center text-xs text-slate-400 mt-4">
-              Already have an account? <Link href="/login" className="text-cyan-400 font-bold hover:underline">Log in</Link>
+              Remember your password? <Link href="/login" className="text-cyan-400 font-bold hover:underline">Log in</Link>
             </p>
           </form>
         ) : (
-          <form onSubmit={handleVerifySubmit} className="space-y-5">
+          <form onSubmit={handleConfirmSubmit} className="space-y-5">
             <div>
-              <label htmlFor="otpCode" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">6-Digit Verification Code</label>
+              <label htmlFor="otpCode" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">6-Digit OTP Code</label>
               <input 
                 id="otpCode"
                 type="text" 
@@ -136,20 +129,33 @@ export default function RegisterPage() {
               />
             </div>
 
+            <div>
+              <label htmlFor="newPassword" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">New Password</label>
+              <input 
+                id="newPassword"
+                type="password" 
+                placeholder="••••••••••••" 
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+                className="w-full rounded-lg border border-white/10 bg-slate-950 px-4 py-3 text-sm text-slate-200"
+              />
+            </div>
+
             <button 
               type="submit" 
               disabled={loading}
-              className="w-full rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 py-3.5 text-xs font-bold text-white shadow-lg transition duration-200 disabled:opacity-50"
+              className="w-full rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 py-3.5 text-xs font-bold text-white shadow-lg tracking-wide transition duration-200 disabled:opacity-50"
             >
-              {loading ? 'Verifying OTP...' : 'Verify OTP Code'}
+              {loading ? 'Confirming Reset...' : 'Confirm Reset Password'}
             </button>
 
             <button 
               type="button" 
-              onClick={() => setPendingVerification(false)}
+              onClick={() => setPendingReset(false)}
               className="w-full text-center text-xs font-bold text-slate-400 hover:text-white transition"
             >
-              ← Back to sign-up
+              ← Back to request code
             </button>
           </form>
         )}
