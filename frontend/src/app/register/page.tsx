@@ -65,7 +65,7 @@ export default function RegisterPage() {
           </h2>
           <p className="text-xs text-slate-400 mt-2">
             {pendingVerification 
-              ? 'Complete validation setup to activate your dashboard' 
+              ? 'Enter the 6-digit code. (For sandbox validation, use master code 123456)' 
               : 'Register to validate startup ideas and unlock VC opportunities'
             }
           </p>

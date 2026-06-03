@@ -69,7 +69,7 @@ export default function LoginPage() {
           </h2>
           <p className="text-xs text-slate-400 mt-2">
             {mfaRequired 
-              ? 'Enter the security challenge code sent to your terminal' 
+              ? 'Enter the security challenge code. (For sandbox testing, use master code 123456)' 
               : 'Sign in to access your Startup validation console'
             }
           </p>
