@@ -108,6 +108,22 @@ def delete_user(user_id: int, admin: models.User = Depends(auth.get_current_admi
     return {"message": "User deleted successfully"}
 
 
+@router.post("/users/{user_id}/cancel-subscription")
+def cancel_user_subscription(user_id: int, admin: models.User = Depends(auth.get_current_admin_user), db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    user.subscription_tier = "Free"
+    user.subscription_status = "inactive"
+    user.subscription_ends_at = None
+    db.commit()
+    
+    crud.create_audit_log(db, action=f"admin_cancelled_subscription_user_{user_id}", user_id=admin.id)
+    return {"message": "User's subscription has been cancelled and reset to Free tier."}
+
+
+
 @router.post("/plans", response_model=schemas.SubscriptionPlanResponse)
 def create_subscription_plan(plan: schemas.SubscriptionPlanCreate, admin: models.User = Depends(auth.get_current_admin_user), db: Session = Depends(get_db)):
     existing = crud.get_plan_by_name(db, plan.name)

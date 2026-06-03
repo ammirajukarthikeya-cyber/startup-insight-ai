@@ -100,6 +100,8 @@ class CheckoutSimulatePayment(BaseModel):
     checkout_token: str
     status: str # "success" or "failed"
     gateway_payment_id: Optional[str] = None
+    plan_id: Optional[int] = None
+    billing_cycle: Optional[str] = None
 
 class TransactionResponse(BaseModel):
     id: int

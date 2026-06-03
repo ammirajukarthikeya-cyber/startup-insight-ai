@@ -89,6 +89,34 @@ export default function PaymentModal({ plan, billingCycle, onClose, onSuccess, o
       refId = `PAYPAL-REF-${Math.floor(100000 + Math.random() * 900000)}`;
     }
 
+    if (paymentMethod === 'card' || paymentMethod === 'paypal') {
+      try {
+        // 1. Get sandbox checkout token
+        const checkoutRes = await api.post('/api/billing/checkout', {
+          plan_id: plan.id,
+          billing_cycle: billingCycle,
+          coupon_code: couponApplied ? couponCode : null,
+          payment_method: paymentMethod.toUpperCase()
+        });
+
+        // 2. Simulate instant confirmation which upgrades the user on the spot
+        const simulateRes = await api.post('/api/billing/simulate-payment', {
+          checkout_token: checkoutRes.checkout_token,
+          status: 'success',
+          gateway_payment_id: refId,
+          plan_id: plan.id,
+          billing_cycle: billingCycle
+        });
+
+        onSuccess(simulateRes.message || 'Payment verified! Subscription upgraded.');
+        setLoading(false);
+      } catch (err: any) {
+        onFailure(err.message || 'Online payment confirmation failed');
+        setLoading(false);
+      }
+      return;
+    }
+
     try {
       const res = await api.post('/api/billing/submit-manual-payment', {
         plan_id: plan.id,

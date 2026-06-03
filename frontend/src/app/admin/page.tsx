@@ -118,6 +118,19 @@ export default function AdminPage() {
       setToastMessage(err.message || 'Failed to delete user');
     }
   };
+  const handleCancelSubscription = async (uId: number) => {
+    if (!confirm("Are you sure you want to cancel this user's subscription and reset it to the Free plan?")) return;
+    try {
+      await api.post(`/api/admin/users/${uId}/cancel-subscription`);
+      setToastType('success');
+      setToastMessage("User's subscription has been cancelled.");
+      fetchAdminData();
+    } catch (err: any) {
+      setToastType('error');
+      setToastMessage(err.message || 'Failed to cancel subscription');
+    }
+  };
+
 
   const handleCreateCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -355,6 +368,14 @@ export default function AdminPage() {
                       <td className="p-3">{u.subscription_tier}</td>
                       <td className="p-3 text-slate-500">{new Date(u.created_at).toLocaleDateString()}</td>
                       <td className="p-3 text-right flex justify-end gap-2 text-[10px]">
+                        {u.subscription_tier !== 'Free' && (
+                          <button 
+                            onClick={() => handleCancelSubscription(u.id)}
+                            className="bg-amber-950 hover:bg-amber-900 text-amber-400 px-2 py-1 rounded border border-amber-500/20"
+                          >
+                            Cancel Sub
+                          </button>
+                        )}
                         <button 
                           onClick={() => handleToggleUser(u.id)}
                           className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded"

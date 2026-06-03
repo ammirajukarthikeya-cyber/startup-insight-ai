@@ -61,25 +61,25 @@ def create_checkout_session(data: schemas.CheckoutSessionCreate, current_user: m
 @router.post("/simulate-payment")
 def simulate_payment(data: schemas.CheckoutSimulatePayment, current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
     # Standard Sandbox Verification flow: check if token represents a simulated checkout
-    # We will look up a random plan or update to Pro for simulation.
-    # In sandbox mode, the client passes token details.
-    
-    # Find matching subscription tier based on token info. For ease, we grant Pro if not specified.
-    tier = "Pro"
-    amount = 999.0
-    plan_name = "Pro Plan"
-    
-    plan = db.query(models.SubscriptionPlan).filter(models.SubscriptionPlan.name == "Pro Plan").first()
+    plan = None
+    if data.plan_id:
+        plan = crud.get_plan(db, data.plan_id)
+        
     if not plan:
-        # Fallback to first available plan in db
+        plan = db.query(models.SubscriptionPlan).filter(models.SubscriptionPlan.name == "Pro Plan").first()
+    if not plan:
         plan = db.query(models.SubscriptionPlan).first()
-        if plan:
-            tier = plan.name
-            amount = plan.monthly_price
-        else:
-            # Emergency default
-            tier = "Pro"
-            amount = 999.0
+        
+    tier = plan.name if plan else "Pro"
+    amount = 0.0
+    if plan:
+        amount = plan.monthly_price if data.billing_cycle == "monthly" else plan.yearly_price
+    else:
+        amount = 999.0
+        
+    days = 30
+    if data.billing_cycle == "yearly":
+        days = 365
             
     if data.status == "success":
         invoice = f"INV-{random.randint(100000, 999999)}"
@@ -89,7 +89,7 @@ def simulate_payment(data: schemas.CheckoutSimulatePayment, current_user: models
         current_user.subscription_tier = tier
         current_user.subscription_status = "active"
         # Grant 30 days or 365 days based on subscription simulation
-        current_user.subscription_ends_at = datetime.utcnow() + timedelta(days=30)
+        current_user.subscription_ends_at = datetime.utcnow() + timedelta(days=days)
         
         # Log transaction
         tx = models.Transaction(
