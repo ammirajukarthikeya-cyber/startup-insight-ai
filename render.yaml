@@ -32,7 +32,7 @@ services:
         fromService:
           type: web
           name: startup-insight-api
-          property: url
+          envVarKey: RENDER_EXTERNAL_URL
 
 databases:
   - name: startup-insight-db
