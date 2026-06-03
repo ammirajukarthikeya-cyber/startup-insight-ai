@@ -3,6 +3,7 @@ uvicorn
 sqlalchemy
 pydantic
 pydantic-settings
+bcrypt
 passlib[bcrypt]
 python-jose[cryptography]
 python-multipart
@@ -10,3 +11,5 @@ requests
 openai
 google-generativeai
 pytest
+psycopg2-binary
+
