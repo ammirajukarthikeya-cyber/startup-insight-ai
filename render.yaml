@@ -29,7 +29,7 @@ services:
     startCommand: npm run start
     envVars:
       - key: NEXT_PUBLIC_API_URL
-        fromRoute:
+        fromService:
           type: web
           name: startup-insight-api
           property: url
