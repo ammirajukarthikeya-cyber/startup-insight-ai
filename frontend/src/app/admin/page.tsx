@@ -337,97 +337,170 @@ export default function AdminPage() {
         )}
 
         {activeTab === 'billing' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start animate-in fade-in duration-300">
-            {/* Create subscription plan */}
+          <div className="space-y-8 animate-in fade-in duration-300">
+            {/* List of current plans with inline price editor */}
             <div className="rounded-xl bg-slate-900/40 border border-white/5 p-6">
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-6">Create Subscription Plan</h3>
-              <form onSubmit={handleCreatePlan} className="space-y-4 text-xs">
-                <input 
-                  type="text" 
-                  placeholder="Plan Name (e.g. Starter Plan)" 
-                  value={planName}
-                  onChange={(e) => setPlanName(e.target.value)}
-                  required
-                  className="w-full rounded bg-slate-950 border border-white/10 p-2.5 text-slate-200"
-                />
-                <input 
-                  type="text" 
-                  placeholder="Short Description" 
-                  value={planDesc}
-                  onChange={(e) => setPlanDesc(e.target.value)}
-                  className="w-full rounded bg-slate-950 border border-white/10 p-2.5 text-slate-200"
-                />
-                <div className="grid grid-cols-3 gap-2">
-                  <input 
-                    type="number" 
-                    placeholder="Monthly price" 
-                    value={planMonthly}
-                    onChange={(e) => setPlanMonthly(Number(e.target.value))}
-                    required
-                    className="w-full rounded bg-slate-950 border border-white/10 p-2.5 text-slate-200"
-                  />
-                  <input 
-                    type="number" 
-                    placeholder="Yearly price" 
-                    value={planYearly}
-                    onChange={(e) => setPlanYearly(Number(e.target.value))}
-                    required
-                    className="w-full rounded bg-slate-950 border border-white/10 p-2.5 text-slate-200"
-                  />
-                  <input 
-                    type="number" 
-                    placeholder="Trial Days" 
-                    value={planTrial}
-                    onChange={(e) => setPlanTrial(Number(e.target.value))}
-                    className="w-full rounded bg-slate-950 border border-white/10 p-2.5 text-slate-200"
-                  />
-                </div>
-                <textarea 
-                  rows={3} 
-                  placeholder='Features Array (JSON format e.g. ["Feature 1", "Feature 2"])'
-                  value={planFeatures}
-                  onChange={(e) => setPlanFeatures(e.target.value)}
-                  className="w-full rounded bg-slate-950 border border-white/10 p-2.5 text-slate-200 font-mono"
-                />
-                <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 py-2.5 rounded font-bold text-white">
-                  Add Plan Matrix
-                </button>
-              </form>
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-6">Manage Subscription Plans & Prices</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-left text-slate-300">
+                  <thead className="bg-slate-950/60 text-slate-400 uppercase tracking-wider">
+                    <tr>
+                      <th className="p-3">Plan Name</th>
+                      <th className="p-3">Monthly Price (₹)</th>
+                      <th className="p-3">Yearly Price (₹)</th>
+                      <th className="p-3">Trial Duration</th>
+                      <th className="p-3">Status</th>
+                      <th className="p-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {plans.map((plan) => (
+                      <tr key={plan.id} className="border-b border-white/5 hover:bg-slate-950/20">
+                        <td className="p-3 font-semibold text-slate-100">{plan.name}</td>
+                        <td className="p-3">
+                          <input 
+                            type="number"
+                            defaultValue={plan.monthly_price}
+                            id={`monthly-${plan.id}`}
+                            className="w-24 rounded bg-slate-950 border border-white/10 p-2 text-slate-200"
+                          />
+                        </td>
+                        <td className="p-3">
+                          <input 
+                            type="number"
+                            defaultValue={plan.yearly_price}
+                            id={`yearly-${plan.id}`}
+                            className="w-24 rounded bg-slate-950 border border-white/10 p-2 text-slate-200"
+                          />
+                        </td>
+                        <td className="p-3">{plan.trial_duration_days} days</td>
+                        <td className="p-3">
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${plan.is_enabled ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>
+                            {plan.is_enabled ? 'Enabled' : 'Disabled'}
+                          </span>
+                        </td>
+                        <td className="p-3 text-right flex justify-end gap-2">
+                          <button 
+                            onClick={async () => {
+                              const mPrice = Number((document.getElementById(`monthly-${plan.id}`) as HTMLInputElement).value);
+                              const yPrice = Number((document.getElementById(`yearly-${plan.id}`) as HTMLInputElement).value);
+                              try {
+                                await api.put(`/api/admin/plans/${plan.id}`, {
+                                  monthly_price: mPrice,
+                                  yearly_price: yPrice
+                                });
+                                setToastType('success');
+                                setToastMessage(`Successfully updated ${plan.name} pricing!`);
+                                fetchAdminData();
+                              } catch (err: any) {
+                                setToastType('error');
+                                setToastMessage(err.message || 'Failed to update plan prices');
+                              }
+                            }}
+                            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold px-3 py-1.5 rounded-lg text-xxs transition shadow-md"
+                          >
+                            Save Prices
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
 
-            {/* Create discount coupons */}
-            <div className="rounded-xl bg-slate-900/40 border border-white/5 p-6">
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-6">Create Discount Coupon</h3>
-              <form onSubmit={handleCreateCoupon} className="space-y-4 text-xs">
-                <input 
-                  type="text" 
-                  placeholder="Coupon Code (e.g. WELCOME50)" 
-                  value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                  required
-                  className="w-full rounded bg-slate-950 border border-white/10 p-2.5 text-slate-200"
-                />
-                <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+              {/* Create subscription plan */}
+              <div className="rounded-xl bg-slate-900/40 border border-white/5 p-6">
+                <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-6">Create Subscription Plan</h3>
+                <form onSubmit={handleCreatePlan} className="space-y-4 text-xs">
                   <input 
-                    type="number" 
-                    placeholder="Discount Percent" 
-                    value={couponDiscount}
-                    onChange={(e) => setCouponDiscount(Number(e.target.value))}
+                    type="text" 
+                    placeholder="Plan Name (e.g. Starter Plan)" 
+                    value={planName}
+                    onChange={(e) => setPlanName(e.target.value)}
                     required
                     className="w-full rounded bg-slate-950 border border-white/10 p-2.5 text-slate-200"
                   />
                   <input 
-                    type="number" 
-                    placeholder="Max Redemptions" 
-                    value={couponMax}
-                    onChange={(e) => setCouponMax(Number(e.target.value))}
+                    type="text" 
+                    placeholder="Short Description" 
+                    value={planDesc}
+                    onChange={(e) => setPlanDesc(e.target.value)}
                     className="w-full rounded bg-slate-950 border border-white/10 p-2.5 text-slate-200"
                   />
-                </div>
-                <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 py-2.5 rounded font-bold text-white">
-                  Add Discount Coupon
-                </button>
-              </form>
+                  <div className="grid grid-cols-3 gap-2">
+                    <input 
+                      type="number" 
+                      placeholder="Monthly price" 
+                      value={planMonthly}
+                      onChange={(e) => setPlanMonthly(Number(e.target.value))}
+                      required
+                      className="w-full rounded bg-slate-950 border border-white/10 p-2.5 text-slate-200"
+                    />
+                    <input 
+                      type="number" 
+                      placeholder="Yearly price" 
+                      value={planYearly}
+                      onChange={(e) => setPlanYearly(Number(e.target.value))}
+                      required
+                      className="w-full rounded bg-slate-950 border border-white/10 p-2.5 text-slate-200"
+                    />
+                    <input 
+                      type="number" 
+                      placeholder="Trial Days" 
+                      value={planTrial}
+                      onChange={(e) => setPlanTrial(Number(e.target.value))}
+                      className="w-full rounded bg-slate-950 border border-white/10 p-2.5 text-slate-200"
+                    />
+                  </div>
+                  <textarea 
+                    rows={3} 
+                    placeholder='Features Array (JSON format e.g. ["Feature 1", "Feature 2"])'
+                    value={planFeatures}
+                    onChange={(e) => setPlanFeatures(e.target.value)}
+                    className="w-full rounded bg-slate-950 border border-white/10 p-2.5 text-slate-200 font-mono"
+                  />
+                  <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 py-2.5 rounded font-bold text-white">
+                    Add Plan Matrix
+                  </button>
+                </form>
+              </div>
+
+              {/* Create discount coupons */}
+              <div className="rounded-xl bg-slate-900/40 border border-white/5 p-6">
+                <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-6">Create Discount Coupon</h3>
+                <form onSubmit={handleCreateCoupon} className="space-y-4 text-xs">
+                  <input 
+                    type="text" 
+                    placeholder="Coupon Code (e.g. WELCOME50)" 
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    required
+                    className="w-full rounded bg-slate-950 border border-white/10 p-2.5 text-slate-200"
+                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    <input 
+                      type="number" 
+                      placeholder="Discount Percent" 
+                      value={couponDiscount}
+                      onChange={(e) => setCouponDiscount(Number(e.target.value))}
+                      required
+                      className="w-full rounded bg-slate-950 border border-white/10 p-2.5 text-slate-200"
+                    />
+                    <input 
+                      type="number" 
+                      placeholder="Max Redemptions" 
+                      value={couponMax}
+                      onChange={(e) => setCouponMax(Number(e.target.value))}
+                      className="w-full rounded bg-slate-950 border border-white/10 p-2.5 text-slate-200"
+                    />
+                  </div>
+                  <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 py-2.5 rounded font-bold text-white">
+                    Add Discount Coupon
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         )}
