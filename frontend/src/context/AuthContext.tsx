@@ -8,8 +8,8 @@ import { api } from '../utils/api';
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<{ isMfaRequired: boolean; token?: string }>;
-  register: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<{ isMfaRequired: boolean; token?: string; otpCode?: string }>;
+  register: (email: string, password: string) => Promise<any>;
   verifyEmail: (email: string, code: string) => Promise<void>;
   verifyMfa: (email: string, code: string) => Promise<void>;
   logout: () => void;
@@ -53,7 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string) => {
     const data = await api.post('/api/auth/login', { email, password });
     if (data.is_mfa_required) {
-      return { isMfaRequired: true, token: data.access_token };
+      return { isMfaRequired: true, token: data.access_token, otpCode: data.otp_code };
     }
     
     localStorage.setItem('token', data.access_token);
@@ -65,7 +65,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const register = async (email: string, password: string) => {
-    await api.post('/api/auth/register', { email, password });
+    const data = await api.post('/api/auth/register', { email, password });
+    return data;
   };
 
   const verifyEmail = async (email: string, code: string) => {

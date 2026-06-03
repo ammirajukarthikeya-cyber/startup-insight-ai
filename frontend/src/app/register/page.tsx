@@ -24,9 +24,13 @@ export default function RegisterPage() {
     setSuccess('');
     setLoading(true);
     try {
-      await register(email, password);
+      const res = await register(email, password);
       setPendingVerification(true);
-      setSuccess('Account created! A 6-digit verification code has been generated. Check developer terminal logs.');
+      if (res && res.otp_code) {
+        setSuccess(`Account created! Your verification code is: ${res.otp_code} (also printed in the developer terminal). Please enter it below to verify.`);
+      } else {
+        setSuccess('Account created! A 6-digit verification code has been generated. Check developer terminal logs.');
+      }
     } catch (err: any) {
       setError(err.message || 'Registration failed. Try a different email.');
     } finally {

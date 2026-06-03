@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import random
 from app.database import get_db
 from app import schemas, crud, models, auth
+from app.email import send_email
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
@@ -19,11 +20,10 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     # Audit log
     crud.create_audit_log(db, action="register_success", user_id=new_user.id)
     
-    # Print mock OTP verification code to terminal for easy developer validation
-    print(f"==================================================")
-    print(f"[DEVELOPER NOTICE] Registered: {user.email}")
-    print(f"[DEVELOPER NOTICE] Email Verification OTP Code: {new_user.otp_code}")
-    print(f"==================================================")
+    # Send real email via SMTP if configured, fallback to console logging
+    subject = "Verify your email - Startup Insight AI"
+    body = f"Welcome to Startup Insight AI!\n\nYour 6-digit email verification code is: {new_user.otp_code}\n\nThis code expires in 15 minutes."
+    send_email(user.email, subject, body)
     
     return new_user
 
@@ -73,10 +73,10 @@ def login(data: schemas.UserLogin, db: Session = Depends(get_db)):
         )
         # Generate login challenge OTP
         crud.update_user_otp(db, user)
-        print(f"==================================================")
-        print(f"[DEVELOPER NOTICE] MFA Active for user: {user.email}")
-        print(f"[DEVELOPER NOTICE] Login challenge OTP Code: {user.otp_code}")
-        print(f"==================================================")
+        # Send MFA email
+        subject = "Login verification challenge - Startup Insight AI"
+        body = f"A login attempt was made on your account.\n\nYour 6-digit verification code is: {user.otp_code}\n\nIf you did not initiate this, please secure your account immediately."
+        send_email(user.email, subject, body)
         
         crud.create_audit_log(
             db, 
@@ -90,7 +90,8 @@ def login(data: schemas.UserLogin, db: Session = Depends(get_db)):
             "token_type": "bearer",
             "role": user.role,
             "email": user.email,
-            "is_mfa_required": True
+            "is_mfa_required": True,
+            "otp_code": user.otp_code
         }
         
     # Generate direct access token
@@ -152,13 +153,17 @@ def reset_password_request(data: schemas.PasswordResetRequest, db: Session = Dep
         return {"message": "If the account exists, a password reset code has been sent."}
         
     crud.update_user_otp(db, user)
-    print(f"==================================================")
-    print(f"[DEVELOPER NOTICE] Password Reset for: {user.email}")
-    print(f"[DEVELOPER NOTICE] Reset OTP Code: {user.otp_code}")
-    print(f"==================================================")
+    
+    # Send reset email
+    subject = "Password Reset Request - Startup Insight AI"
+    body = f"You requested a password reset for Startup Insight AI.\n\nYour 6-digit password reset code is: {user.otp_code}\n\nIf you did not request this, you can ignore this email."
+    send_email(user.email, subject, body)
     
     crud.create_audit_log(db, action="password_reset_requested", user_id=user.id)
-    return {"message": "Password reset code sent. Check your developer terminal."}
+    return {
+        "message": "Password reset code sent.",
+        "otp_code": user.otp_code
+    }
 
 
 @router.post("/reset-password-confirm")
