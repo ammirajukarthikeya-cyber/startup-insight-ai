@@ -107,7 +107,7 @@ export default function PaymentModal({ plan, billingCycle, onClose, onSuccess, o
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-2xl border border-white/10 bg-slate-900 p-6 shadow-2xl animate-in zoom-in-95 duration-200">
+      <div className="w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl border border-white/10 bg-slate-900 p-6 shadow-2xl animate-in zoom-in-95 duration-200 scrollbar-thin scrollbar-thumb-slate-800">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
@@ -224,25 +224,25 @@ export default function PaymentModal({ plan, billingCycle, onClose, onSuccess, o
           )}
 
           {paymentMethod === 'upi' && (
-            <div className="space-y-3 flex flex-col items-center justify-center text-center">
-              <p className="text-[11px] text-cyan-400 font-bold mb-1">
+            <div className="space-y-2 flex flex-col items-center justify-center text-center">
+              <p className="text-[11px] text-cyan-400 font-bold mb-0.5">
                 Send exact amount of <span className="text-white">₹{finalPrice.toFixed(2)}</span> to UPI ID: <span className="text-white">{settings.upi_id}</span>
               </p>
 
               {/* Direct UPI App Redirect Link (Direct mobile pay option) */}
               <a 
                 href={upiUrl}
-                className="w-full text-center block rounded-xl bg-gradient-to-r from-cyan-600/20 to-blue-600/20 hover:from-cyan-600/30 hover:to-blue-600/30 border border-cyan-500/30 py-2.5 text-xs font-bold text-cyan-300 shadow-md transition"
+                className="w-full text-center block rounded-lg bg-gradient-to-r from-cyan-600/20 to-blue-600/20 hover:from-cyan-600/30 hover:to-blue-600/30 border border-cyan-500/25 py-2 text-xs font-bold text-cyan-300 shadow-md transition"
               >
                 ⚡ Pay via UPI App Directly (Mobile Only)
               </a>
 
-              <div className="p-3 bg-white rounded-xl inline-block shadow-lg mt-2">
+              <div className="p-2 bg-white rounded-lg inline-block shadow-lg mt-1">
                 {/* Dynamically generated scannable QR Code */}
                 <img 
                   src={qrCodeUrl} 
                   alt="UPI Payment QR Code" 
-                  className="h-32 w-32 object-contain" 
+                  className="h-24 w-24 object-contain" 
                   onError={(e) => {
                     // Fallback in case the network fails
                     e.currentTarget.style.display = 'none';
@@ -251,7 +251,7 @@ export default function PaymentModal({ plan, billingCycle, onClose, onSuccess, o
               </div>
               <p className="text-[9px] text-slate-400">Scan QR code using GPay, PhonePe, Paytm, or BHIM to pay</p>
               
-              <div className="w-full text-left p-3.5 bg-slate-950/60 rounded-xl border border-white/5 space-y-1.5 mt-2">
+              <div className="w-full text-left p-3 bg-slate-950/60 rounded-xl border border-white/5 space-y-1 mt-1">
                 <p className="text-[10px] text-purple-400 font-bold uppercase tracking-wider">Or Bank Account Transfer Details</p>
                 <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-slate-300 text-[10px]">
                   <span className="text-slate-500">Bank Name:</span>
