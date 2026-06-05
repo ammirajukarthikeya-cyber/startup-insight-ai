@@ -30,6 +30,9 @@ services:
         sync: false
       - key: SMTP_FROM
         value: "noreply@startupinsight.ai"
+      - key: RESEND_API_KEY
+        sync: false
+
 
 
   # 2. Frontend Next.js Service
