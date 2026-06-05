@@ -88,8 +88,7 @@ def login(data: schemas.UserLogin, db: Session = Depends(get_db)):
             "token_type": "bearer",
             "role": user.role,
             "email": user.email,
-            "is_mfa_required": True,
-            "otp_code": user.otp_code
+            "is_mfa_required": True
         }
         
     # Generate direct access token
@@ -159,8 +158,7 @@ def reset_password_request(data: schemas.PasswordResetRequest, db: Session = Dep
     
     crud.create_audit_log(db, action="password_reset_requested", user_id=user.id)
     return {
-        "message": "Password reset code sent.",
-        "otp_code": user.otp_code
+        "message": "Password reset code sent."
     }
 
 

@@ -29,11 +29,7 @@ export default function LoginPage() {
       if (res.isMfaRequired) {
         setMfaRequired(true);
         setMfaToken(res.token || '');
-        if (res.otpCode) {
-          setSuccess(`MFA verification challenge code: ${res.otpCode} (also printed in the developer terminal).`);
-        } else {
-          setSuccess('MFA verification challenge code sent. Check developer terminal logs.');
-        }
+        setSuccess('MFA verification challenge code sent to your registered email address.');
       } else {
         router.push('/dashboard');
       }

@@ -51,7 +51,6 @@ class UserResponse(UserBase):
     subscription_tier: str
     subscription_status: str
     subscription_ends_at: Optional[datetime] = None
-    otp_code: Optional[str] = None
     created_at: datetime
 
     class Config:

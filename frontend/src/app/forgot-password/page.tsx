@@ -23,13 +23,9 @@ export default function ForgotPasswordPage() {
     setSuccess('');
     setLoading(true);
     try {
-      const res = await api.post('/api/auth/reset-password-request', { email });
+      await api.post('/api/auth/reset-password-request', { email });
       setPendingReset(true);
-      if (res && res.otp_code) {
-        setSuccess(`Reset OTP code: ${res.otp_code} (also sent to your email). Please enter it below along with your new password.`);
-      } else {
-        setSuccess('If the account exists, a 6-digit password reset OTP code has been sent to your email.');
-      }
+      setSuccess('If the account exists, a 6-digit password reset OTP code has been sent to your email.');
     } catch (err: any) {
       setError(err.message || 'Failed to request password reset. Try again.');
     } finally {
