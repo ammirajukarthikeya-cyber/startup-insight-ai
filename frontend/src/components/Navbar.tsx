@@ -21,17 +21,7 @@ export default function Navbar() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         {/* Brand Logo */}
         <Link href="/" onClick={closeMenu} className="flex items-center gap-2 text-xl font-bold tracking-tight text-white transition hover:opacity-90">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="32" height="32" rx="8" fill="url(#nav-logo-grad)" />
-            <path d="M16 7L24 15H19V25H13V15H8L16 7Z" fill="white" />
-            <circle cx="16" cy="16" r="3" fill="#00f0ff" />
-            <defs>
-              <linearGradient id="nav-logo-grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#7c3aed" />
-                <stop offset="1" stopColor="#2563eb" />
-              </linearGradient>
-            </defs>
-          </svg>
+          <img src="/icon.png" alt="Startup Insight AI Logo" className="w-8 h-8 rounded-lg object-cover" />
           <span>
             Startup Insight <span className="text-cyan-400">AI</span>
           </span>
