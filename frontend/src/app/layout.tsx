@@ -21,6 +21,26 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+        
+        {/* PWA & Mobile Web App Meta Tags */}
+        <meta name="theme-color" content="#050814" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="apple-touch-icon" href="/icon.png" />
+        
+        {/* Service Worker Registration */}
+        <script dangerouslySetInnerHTML={{ __html: `
+          if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+              navigator.serviceWorker.register('/sw.js').then(function(reg) {
+                console.log('PWA ServiceWorker registered successfully: ', reg.scope);
+              }, function(err) {
+                console.log('PWA ServiceWorker registration failed: ', err);
+              });
+            });
+          }
+        `}} />
       </head>
       <body className="dark-theme antialiased bg-[#050814] text-slate-100 min-h-screen flex flex-col">
         <AuthProvider>
