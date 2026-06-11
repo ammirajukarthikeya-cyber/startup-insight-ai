@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { AuthProvider } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
+import AIChatWidget from '../components/AIChatWidget';
 
 export const metadata: Metadata = {
   title: 'Startup Insight AI - Validate, Analyze & Scale Your Startup',
@@ -53,6 +54,9 @@ export default function RootLayout({
           <main className="flex-1 w-full">
             {children}
           </main>
+          
+          {/* Global Floating AI Chat Widget */}
+          <AIChatWidget />
           
           <footer className="w-full py-8 border-t border-white/5 bg-slate-950/40 text-center text-xs text-slate-500">
             <div className="mx-auto max-w-7xl px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
