@@ -47,8 +47,10 @@ export default function RootLayout({
         <AuthProvider>
           {/* Aesthetic backgrounds */}
           <div className="grid-background" />
+          <div className="mesh-dots" />
           <div className="glowing-orb-1" />
           <div className="glowing-orb-2" />
+          <div className="glowing-orb-3" />
           
           <Navbar />
           <main className="flex-1 w-full">
