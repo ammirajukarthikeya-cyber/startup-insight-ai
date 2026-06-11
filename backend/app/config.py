@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: str = ""
     SMTP_FROM: str = "noreply@startupinsight.ai"
     RESEND_API_KEY: str = ""
+    CORS_ORIGINS: str = "*"
+
 
 
     class Config:

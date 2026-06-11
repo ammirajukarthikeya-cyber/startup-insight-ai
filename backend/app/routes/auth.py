@@ -2,14 +2,41 @@ from fastapi import APIRouter, Depends, HTTPException, status, Header, Request
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 import random
+import time
+from collections import defaultdict
 from app.database import get_db
 from app import schemas, crud, models, auth
 from app.email import send_email
 
+# Simple in-memory rate limiter for auth endpoints
+class RateLimiter:
+    def __init__(self, requests_limit: int, window_seconds: int):
+        self.requests_limit = requests_limit
+        self.window_seconds = window_seconds
+        self.history = defaultdict(list)
+
+    def check_limit(self, client_ip: str) -> bool:
+        now = time.time()
+        self.history[client_ip] = [t for t in self.history[client_ip] if now - t < self.window_seconds]
+        if len(self.history[client_ip]) >= self.requests_limit:
+            return False
+        self.history[client_ip].append(now)
+        return True
+
+auth_limiter = RateLimiter(requests_limit=5, window_seconds=60)
+
+def check_auth_rate_limit(request: Request):
+    client_ip = request.client.host if request.client else "unknown"
+    if not auth_limiter.check_limit(client_ip):
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Too many authentication attempts. Please try again in 1 minute."
+        )
+
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
 @router.post("/register", response_model=schemas.UserResponse)
-def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
+def register(user: schemas.UserCreate, db: Session = Depends(get_db), _=Depends(check_auth_rate_limit)):
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email is already registered")
@@ -54,7 +81,7 @@ def verify_email(data: schemas.OTPVerify, db: Session = Depends(get_db)):
 
 
 @router.post("/login", response_model=schemas.Token)
-def login(data: schemas.UserLogin, db: Session = Depends(get_db)):
+def login(data: schemas.UserLogin, db: Session = Depends(get_db), _=Depends(check_auth_rate_limit)):
     user = crud.get_user_by_email(db, email=data.email)
     if not user or not auth.verify_password(data.password, user.hashed_password):
         crud.create_audit_log(db, action="login_failed", ip_address=data.ip_address)
@@ -143,7 +170,7 @@ def verify_mfa(data: schemas.MFAVerify, db: Session = Depends(get_db)):
 
 
 @router.post("/reset-password-request")
-def reset_password_request(data: schemas.PasswordResetRequest, db: Session = Depends(get_db)):
+def reset_password_request(data: schemas.PasswordResetRequest, db: Session = Depends(get_db), _=Depends(check_auth_rate_limit)):
     user = crud.get_user_by_email(db, email=data.email)
     if not user:
         # Silent success to prevent account harvesting

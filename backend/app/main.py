@@ -15,14 +15,31 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# Parse CORS origins configuration securely
+cors_origins = [origin.strip() for origin in settings.CORS_ORIGINS.split(",") if origin.strip()]
+allow_all_origins = "*" in cors_origins or not cors_origins
+
 # Apply CORS origins policy configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In production, lock this down to the Next.js origin domain
-    allow_credentials=False,
+    allow_origins=["*"] if allow_all_origins else cors_origins,
+    allow_credentials=not allow_all_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# HTTP Security Headers Middleware
+@app.middleware("http")
+async def add_security_headers(request, call_next):
+    response = await call_next(request)
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Content-Security-Policy"] = "default-src 'self'; frame-ancestors 'none'; object-src 'none';"
+    return response
+
 
 # Register app router endpoints
 app.include_router(auth_router.router)
