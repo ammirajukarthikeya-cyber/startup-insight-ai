@@ -36,7 +36,7 @@ def check_auth_rate_limit(request: Request):
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
 @router.post("/register", response_model=schemas.UserResponse)
-def register(user: schemas.UserCreate, db: Session = Depends(get_db), _=Depends(check_auth_rate_limit)):
+def register(user: schemas.UserCreate, request: Request, db: Session = Depends(get_db), _=Depends(check_auth_rate_limit)):
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email is already registered")
@@ -45,7 +45,9 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db), _=Depends(
     new_user = crud.create_user(db, user, hashed_pass)
     
     # Audit log
-    crud.create_audit_log(db, action="register_success", user_id=new_user.id)
+    client_ip = request.client.host if request.client else "unknown"
+    user_agent = request.headers.get("user-agent", "Unknown Browser")
+    crud.create_audit_log(db, action="register_success", user_id=new_user.id, ip_address=client_ip, device_info=user_agent)
     
     # Send real email via SMTP if configured, fallback to console logging
     subject = "Verify your email - Startup Insight AI"
@@ -81,10 +83,13 @@ def verify_email(data: schemas.OTPVerify, db: Session = Depends(get_db)):
 
 
 @router.post("/login", response_model=schemas.Token)
-def login(data: schemas.UserLogin, db: Session = Depends(get_db), _=Depends(check_auth_rate_limit)):
+def login(data: schemas.UserLogin, request: Request, db: Session = Depends(get_db), _=Depends(check_auth_rate_limit)):
     user = crud.get_user_by_email(db, email=data.email)
+    client_ip = request.client.host if request.client else "unknown"
+    user_agent = request.headers.get("user-agent", "Unknown Browser")
+    
     if not user or not auth.verify_password(data.password, user.hashed_password):
-        crud.create_audit_log(db, action="login_failed", ip_address=data.ip_address)
+        crud.create_audit_log(db, action="login_failed", ip_address=client_ip, device_info=user_agent)
         raise HTTPException(status_code=400, detail="Incorrect email or password")
         
     if not user.is_active:
@@ -107,8 +112,8 @@ def login(data: schemas.UserLogin, db: Session = Depends(get_db), _=Depends(chec
             db, 
             action="login_mfa_required", 
             user_id=user.id, 
-            ip_address=data.ip_address,
-            device_info=data.device_info
+            ip_address=client_ip,
+            device_info=user_agent
         )
         return {
             "access_token": temp_token,
@@ -120,13 +125,13 @@ def login(data: schemas.UserLogin, db: Session = Depends(get_db), _=Depends(chec
         
     # Generate direct access token
     access_token = auth.create_access_token(data={"sub": user.email, "role": user.role})
-    crud.create_user_session(db, user.id, access_token, data.device_info, data.ip_address)
+    crud.create_user_session(db, user.id, access_token, user_agent, client_ip)
     crud.create_audit_log(
         db, 
         action="login_success", 
         user_id=user.id, 
-        ip_address=data.ip_address,
-        device_info=data.device_info
+        ip_address=client_ip,
+        device_info=user_agent
     )
     
     return {
@@ -139,14 +144,17 @@ def login(data: schemas.UserLogin, db: Session = Depends(get_db), _=Depends(chec
 
 
 @router.post("/verify-mfa", response_model=schemas.Token)
-def verify_mfa(data: schemas.MFAVerify, db: Session = Depends(get_db)):
+def verify_mfa(data: schemas.MFAVerify, request: Request, db: Session = Depends(get_db)):
     user = crud.get_user_by_email(db, email=data.email)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
         
+    client_ip = request.client.host if request.client else "unknown"
+    user_agent = request.headers.get("user-agent", "Unknown Browser")
+    
     # Validate login challenge OTP code (allow '123456' master bypass code for sandbox testing)
     if user.otp_code != data.code and data.code != "123456":
-        crud.create_audit_log(db, action="mfa_verification_failed", user_id=user.id)
+        crud.create_audit_log(db, action="mfa_verification_failed", user_id=user.id, ip_address=client_ip, device_info=user_agent)
         raise HTTPException(status_code=400, detail="Invalid MFA challenge code")
         
     if data.code != "123456" and user.otp_expires_at < datetime.utcnow():
@@ -157,8 +165,8 @@ def verify_mfa(data: schemas.MFAVerify, db: Session = Depends(get_db)):
     db.commit()
     
     access_token = auth.create_access_token(data={"sub": user.email, "role": user.role})
-    crud.create_user_session(db, user.id, access_token, "MFA Web Client", None)
-    crud.create_audit_log(db, action="login_success_mfa", user_id=user.id)
+    crud.create_user_session(db, user.id, access_token, user_agent, client_ip)
+    crud.create_audit_log(db, action="login_success_mfa", user_id=user.id, ip_address=client_ip, device_info=user_agent)
     
     return {
         "access_token": access_token,

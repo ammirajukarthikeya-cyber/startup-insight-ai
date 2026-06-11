@@ -1,11 +1,31 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List
+import urllib.request
+import json
 from app.database import get_db
 from app import schemas, crud, models, auth
 
 router = APIRouter(prefix="/api/user", tags=["User Profiles"])
+
+def get_location_from_ip(ip: str) -> str:
+    if not ip or ip in ("127.0.0.1", "::1", "unknown", "localhost"):
+        return "Local Session (Delhi, India)"
+    try:
+        url = f"http://ip-api.com/json/{ip}"
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=2) as response:
+            data = json.loads(response.read().decode())
+            if data.get("status") == "success":
+                city = data.get("city", "Unknown City")
+                region = data.get("regionName", "")
+                country = data.get("country", "India")
+                parts = [p for p in (city, region, country) if p]
+                return ", ".join(parts)
+    except Exception:
+        pass
+    return "Unknown Location"
 
 @router.get("/profile", response_model=schemas.UserResponse)
 def get_profile(current_user: models.User = Depends(auth.get_current_user)):
@@ -38,6 +58,8 @@ def get_active_sessions(current_user: models.User = Depends(auth.get_current_use
             "device_info": s.device_info,
             "ip_address": s.ip_address,
             "login_time": s.login_time,
+            "login_time_ist": (s.login_time + timedelta(hours=5, minutes=30)).strftime("%d-%b-%Y %I:%M:%S %p IST") if s.login_time else "N/A",
+            "login_location": get_location_from_ip(s.ip_address),
             "last_active": s.last_active,
             "is_current": s.token == auth.oauth2_scheme
         }

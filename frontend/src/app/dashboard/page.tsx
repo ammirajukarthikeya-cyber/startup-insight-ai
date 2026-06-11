@@ -154,7 +154,12 @@ export default function UserDashboard() {
                 <div key={s.id} className="rounded-xl border border-white/5 bg-slate-950/30 p-4 flex justify-between items-center text-xs">
                   <div>
                     <p className="font-semibold text-slate-200">{s.device_info || 'Unknown Browser'}</p>
-                    <p className="text-[10px] text-slate-500 mt-1">IP: {s.ip_address || '127.0.0.1'} • Login: {new Date(s.login_time).toLocaleString()}</p>
+                    <p className="text-[10px] text-slate-400 mt-1">
+                      <strong className="text-slate-300">Location:</strong> {s.login_location || 'Unknown Location'}
+                    </p>
+                    <p className="text-[10px] text-slate-500 mt-1">
+                      IP: {s.ip_address || '127.0.0.1'} • Login: {s.login_time_ist || new Date(s.login_time).toLocaleString()}
+                    </p>
                   </div>
                   {!s.is_current && (
                     <button 
